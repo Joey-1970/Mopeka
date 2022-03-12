@@ -1,0 +1,12 @@
+{
+    "id": "{6E60518A-5530-2E95-DB44-88B7FEFACD06}",
+    "name": "MopekaGasSensor",
+    "type": 3,
+    "vendor": "",
+    "aliases": [],
+    "parentRequirements": [],
+    "childRequirements": [],
+    "implemented": [],
+    "prefix": "MopekaGasSensor",
+    "url": "https://github.com/Joey-1970/Mopeka"
+}
