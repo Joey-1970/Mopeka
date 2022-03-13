@@ -2,8 +2,8 @@
     // Klassendefinition
     class MopekaGasSensor extends IPSModule 
     {
-	// https://docs.google.com/document/d/1OSW3gluYNK8d_gSz4Bk89LMQ4ZrzjQY6/edit?usp=sharing&ouid=110144688998608708274&rtpof=true&sd=true
-	// https://stackoverflow.com/questions/69270827/c-sharp-modbus-protocol-renogy-wanderer-rover-20a-40a-solar-charge-controller
+	// https://community.symcon.de/t/hilfe-bei-der-umsetzung-von-java-in-php/125424
+	// https://community.victronenergy.com/questions/52274/venus-raspberry-pi-read-other-ble-device.html
 	    
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create() 
