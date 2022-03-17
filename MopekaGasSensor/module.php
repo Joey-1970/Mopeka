@@ -45,8 +45,6 @@
 		$arrayOptions[] = array("label" => "11 kg", "value" => 2);
 		$arrayElements[] = array("type" => "Select", "name" => "GasBottleTyp", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
 		$arrayActions = array(); 
-		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
-		$arrayActions[] = array("type" => "TestCenter", "name" => "TestCenter");
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
  	} 
