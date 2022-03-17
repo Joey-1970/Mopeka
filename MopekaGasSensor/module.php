@@ -15,7 +15,8 @@
 	
 		
             	$this->RegisterPropertyBoolean("Open", false);
-	
+		$this->RegisterPropertyString("MAC", "00:00:00:00:00:00");
+		$this->RegisterPropertyInteger("GasBottleTyp", 0);
 		
 		// Profile anlegen
 		
@@ -37,8 +38,12 @@
 		
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox", "caption" => "Aktiv"); 
-		
-			
+		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+		$arrayOptions = array();
+		$arrayOptions[] = array("label" => "unbekannt", "value" => 0);
+		$arrayOptions[] = array("label" => "5 kg", "value" => 1);
+		$arrayOptions[] = array("label" => "11 kg", "value" => 2);
+		$arrayElements[] = array("type" => "Select", "name" => "GasBottleTyp", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
 		$arrayActions = array(); 
 		$arrayActions[] = array("type" => "Label", "label" => "Test Center"); 
 		$arrayActions[] = array("type" => "TestCenter", "name" => "TestCenter");
@@ -89,6 +94,23 @@
 		
 		
 	}
+	    
+	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
+	{
+	        if (!IPS_VariableProfileExists($Name))
+	        {
+	            IPS_CreateVariableProfile($Name, 1);
+	        }
+	        else
+	        {
+	            $profile = IPS_GetVariableProfile($Name);
+	            if ($profile['ProfileType'] != 1)
+	                throw new Exception("Variable profile type does not match for profile " . $Name);
+	        }
+	        IPS_SetVariableProfileIcon($Name, $Icon);
+	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
+	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
+	}    
 
 }
 ?>
