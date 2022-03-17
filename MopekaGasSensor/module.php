@@ -78,7 +78,16 @@
 		}
     	}          
 	    
-
+	public function ReceiveData($JSONString) 
+	{
+		// Empfangene Daten vom I/O
+	    	$Data = json_decode($JSONString);
+		$Message = utf8_decode($Data->Buffer);		
+		$this->SendDebug("ReceiveData", $Message, 0);
+		
+		
+		
+	}
 
 }
 ?>
