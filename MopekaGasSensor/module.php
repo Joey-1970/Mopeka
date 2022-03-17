@@ -21,9 +21,10 @@
 		
 		
 		// Status-Variablen anlegen
-		
-		
-		
+		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
+		$this->RegisterVariableFloat("BatteryVoltage", "Betterie Spannung", "~Volt", 20);
+		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
+		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 40);
         }
        	
 	public function GetConfigurationForm() { 
