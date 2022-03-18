@@ -16,7 +16,8 @@
 		
             	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("MAC", "00:00:00:00:00:00");
-		$this->RegisterPropertyInteger("GasBottleTyp", 0);
+		$this->RegisterPropertyInteger("GasBottleValue", 0);
+		$this->RegisterPropertyInteger("IndividualLevel", 36);
 		
 		// Profile anlegen
 		
@@ -25,7 +26,8 @@
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
 		$this->RegisterVariableFloat("BatteryVoltage", "Betterie Spannung", "~Volt", 20);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
-		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 40);
+		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 40);
+		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 50);
         }
        	
 	public function GetConfigurationForm() { 
@@ -40,10 +42,14 @@
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox", "caption" => "Aktiv"); 
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "unbekannt", "value" => 0);
-		$arrayOptions[] = array("label" => "5 kg", "value" => 1);
-		$arrayOptions[] = array("label" => "11 kg", "value" => 2);
-		$arrayElements[] = array("type" => "Select", "name" => "GasBottleTyp", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
+		$arrayOptions[] = array("label" => "3 kg", "value" => 3);
+		$arrayOptions[] = array("label" => "5 kg", "value" => 5);
+		$arrayOptions[] = array("label" => "11 kg", "value" => 11);
+		$arrayOptions[] = array("label" => "33 kg", "value" => 33);
+		$arrayOptions[] = array("label" => "Indivuduell", "value" => 0);
+		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
+
 		$arrayActions = array(); 
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
