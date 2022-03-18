@@ -46,7 +46,7 @@
 		$arrayOptions[] = array("label" => "5 kg", "value" => 5);
 		$arrayOptions[] = array("label" => "11 kg", "value" => 11);
 		$arrayOptions[] = array("label" => "33 kg", "value" => 33);
-		$arrayOptions[] = array("label" => "Indivuduell", "value" => 0);
+		$arrayOptions[] = array("label" => "Individuell", "value" => 0);
 		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
 
