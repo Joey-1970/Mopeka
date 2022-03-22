@@ -96,13 +96,13 @@
 		
 		
 		// Temporäre Auswertung
-		/*
+		
 		If (strpos($Message, "> HCI Event: LE Meta Event") !== false) {
 			// neuer Datensatz beginnt
 			$this->SendDebug("ReceiveData", "Neuer Datensatz", 0);
-			$this->SetBuffer("NewData", "1");
+			$this->SetBuffer("MAC", "0");
 		}
-		
+		/*
 		If (strpos($Message, "Address:") !== false) {
 			$this->SendDebug("ReceiveData", $Message, 0);
 			$this->SendDebug("ReceiveData", strtoupper($this->ReadPropertyString("MAC")), 0);
@@ -113,9 +113,6 @@
 			$this->SendDebug("ReceiveData", $Message, 0);
 			$this->SendDebug("ReceiveData", "MAC stimmt ueberein", 0);
 			$this->SetBuffer("MAC", "1");
-		}
-		else {
-			$this->SetBuffer("MAC", "0");
 		}
 		
 		If ( (strpos($Message, "Data: ") !== false) AND ($this->GetBuffer("MAC") == "1") ) {
