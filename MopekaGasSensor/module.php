@@ -103,7 +103,7 @@
 			$this->SetBuffer("NewData", "1");
 		}
 		*/
-		If (strpos($Message, ucase($this->ReadPropertyString("MAC"))) !== false) {
+		If (strpos($Message, strtoupper($this->ReadPropertyString("MAC"))) !== false) {
 			$this->SendDebug("ReceiveData", $Message, 0);
 			$this->SendDebug("ReceiveData", "MAC stimmt ueberein", 0);
 			$this->SetBuffer("MAC", "1");
