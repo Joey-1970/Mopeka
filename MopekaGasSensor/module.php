@@ -93,7 +93,7 @@
 		// Empfangene Daten vom I/O
 	    	$Data = json_decode($JSONString);
 		$Message = utf8_decode($Data->Buffer);		
-		
+		$Message = trim($Message, "\x00..\x1F");
 		
 		// Temporäre Auswertung
 		
@@ -116,10 +116,12 @@
 		
 		If ( (strpos($Message, "Data: ") !== false) AND ($this->GetBuffer("MAC") == "1") ) {
 			// Daten
+			$Message = str_replace('Data: ', '', $Message);
 			$this->SendDebug("ReceiveData", $Message, 0);
 		}
 		If ((strpos($Message, "RSSI: ") !== false) AND ($this->GetBuffer("MAC") == "1")) {
 			// RSSI
+			$Message = str_replace('RSSI: ', '', $Message);
 			$this->SendDebug("ReceiveData", $Message, 0);
 		}
 		
