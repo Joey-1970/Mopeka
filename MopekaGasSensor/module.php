@@ -93,10 +93,19 @@
 		// Empfangene Daten vom I/O
 	    	$Data = json_decode($JSONString);
 		$Message = utf8_decode($Data->Buffer);		
+		
+		
+		// Temporäre Auswertung
+		If (strpos($Message, "> HCI Event: LE Meta Event") !== false) {
+			// neuer Datensatz beginnt
+			$this->SendDebug("ReceiveData", "Neuer Datensatz", 0);
+			$this->SetBuffer("NewData", "1");
+		}
+		
+		
+		
+		
 		$this->SendDebug("ReceiveData", $Message, 0);
-		
-		
-		
 	}
 	    
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
