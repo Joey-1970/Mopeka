@@ -136,13 +136,27 @@
 		$DataArray = array();
 		$DataArray = $this->hex2ByteArray($Data);
 		$this->SendDebug("DataEvaluation", serialize($DataArray), 0);
-	}
+		
+		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
+		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
+		
+		$Temperature = ($DataArray[4] - 25.0) * 1.776964;
+		$this->SetValueWhenChanged("Temperature", $Temperature);	
+	}		
+      
 	 
 	private function hex2ByteArray($hexString) 
 	{
   		$string = hex2bin($hexString);
   	return unpack('C*', $string);
 	}
+	    
+	private function SetValueWhenChanged($Ident, $Value)
+    	{
+        	if ($this->GetValue($Ident) != $Value) {
+            		$this->SetValue($Ident, $Value);
+        	}
+    	}    
 	    
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
 	{
