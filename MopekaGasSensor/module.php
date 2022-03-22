@@ -134,7 +134,7 @@
 	private function DataEvaluation(string $Data)   
 	{
 		$DataArray = array();
-		$DataArray = hex2ByteArray($Data);
+		$DataArray = $this->hex2ByteArray($Data);
 		$this->SendDebug("DataEvaluation", serialize($DataArray), 0);
 	}
 	 
