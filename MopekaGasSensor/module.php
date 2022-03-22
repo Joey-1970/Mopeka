@@ -99,14 +99,14 @@
 		
 		If (strpos($Message, "> HCI Event: LE Meta Event") !== false) {
 			// neuer Datensatz beginnt
+			If ($this->GetBuffer("Data") <> "") {
+				$this->DataEvaluation($this->GetBuffer("Data"));
+			}
+			
 			$this->SetBuffer("MAC", "0");
+			$this->SetBuffer("Data", "");
+			$this->SetBuffer("RSSI", "");
 		}
-		/*
-		If (strpos($Message, "Address:") !== false) {
-			$this->SendDebug("ReceiveData", $Message, 0);
-			$this->SendDebug("ReceiveData", strtoupper($this->ReadPropertyString("MAC")), 0);
-		}
-		*/
 		
 		If (strpos($Message, strtoupper($this->ReadPropertyString("MAC"))) !== false) {
 			//$this->SendDebug("ReceiveData", $Message, 0);
@@ -117,16 +117,31 @@
 		If ( (strpos($Message, "Data: ") !== false) AND ($this->GetBuffer("MAC") == "1") ) {
 			// Daten
 			$Message = str_replace('Data: ', '', $Message);
+			$this->SetBuffer("Data", $Message);
 			$this->SendDebug("ReceiveData", $Message, 0);
 		}
 		If ((strpos($Message, "RSSI: ") !== false) AND ($this->GetBuffer("MAC") == "1")) {
 			// RSSI
 			$Message = str_replace('RSSI: ', '', $Message);
+			$this->SetBuffer("RSSI", $Message);
 			$this->SendDebug("ReceiveData", $Message, 0);
 		}
 		
 		
 		//$this->SendDebug("ReceiveData", $Message, 0);
+	}
+	
+	private function DataEvaluation(string $Data)   
+	{
+		$DataArray = array();
+		$DataArray = hex2ByteArray($Data);
+		$this->SendDebug("DataEvaluation", serialize($DataArray), 0);
+	}
+	 
+	private function hex2ByteArray($hexString) 
+	{
+  		$string = hex2bin($hexString);
+  	return unpack('C*', $string);
 	}
 	    
 	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
