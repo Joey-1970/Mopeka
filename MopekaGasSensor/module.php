@@ -102,12 +102,12 @@
 			$this->SendDebug("ReceiveData", "Neuer Datensatz", 0);
 			$this->SetBuffer("NewData", "1");
 		}
-		*/
+		
 		If (strpos($Message, "Address:") !== false) {
 			$this->SendDebug("ReceiveData", $Message, 0);
 			$this->SendDebug("ReceiveData", strtoupper($this->ReadPropertyString("MAC")), 0);
 		}
-		
+		*/
 		
 		If (strpos($Message, strtoupper($this->ReadPropertyString("MAC"))) !== false) {
 			$this->SendDebug("ReceiveData", $Message, 0);
