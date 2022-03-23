@@ -143,7 +143,11 @@
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
 		
 		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
-		$this->SetValueWhenChanged("Temperature", $Temperature);	
+		If ($Temperature == 0) {
+			$this->SetValueWhenChanged("Temperature", -40);
+		} else {
+			$this->SetValueWhenChanged("Temperature", $Temperature);
+		}
 		
 		$UpdateRate = ($DataArray[4] & 0x40);
 		If ($UpdateRate > 0) {
