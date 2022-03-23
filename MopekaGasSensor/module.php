@@ -28,6 +28,8 @@
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
 		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 40);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 50);
+		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 60;
+		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 70;
         }
        	
 	public function GetConfigurationForm() { 
@@ -140,8 +142,23 @@
 		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
 		
-		$Temperature = ($DataArray[4] - 25.0) * 1.776964;
+		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
 		$this->SetValueWhenChanged("Temperature", $Temperature);	
+		
+		$UpdateRate = ($DataArray[4] & 0x40);
+		If ($UpdateRate > 0) {
+			$this->SetValueWhenChanged("UpdateRate", true);
+		} else {
+			$this->SetValueWhenChanged("UpdateRate", false);
+		}
+		
+		$SyncPressed = ($DataArray[4] & 0x80);
+		If ($SyncPressed > 0) {
+			$this->SetValueWhenChanged("SyncPressed", true);
+		} else {
+			$this->SetValueWhenChanged("SyncPressed", false);
+		}
+		
 	}		
       
 	 
