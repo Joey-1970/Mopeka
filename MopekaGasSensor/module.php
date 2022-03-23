@@ -28,8 +28,8 @@
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
 		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 40);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 50);
-		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 60;
-		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 70;
+		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 60);
+		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 70);
         }
        	
 	public function GetConfigurationForm() { 
