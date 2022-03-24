@@ -192,7 +192,7 @@
 			$ndx += 1;
 		}
        
-		$this->SendDebug("DataEvaluation", print_r($adv), 0);
+		$this->SendDebug("DataEvaluation", serialize($adv), 0);
 		
 	}		
       
