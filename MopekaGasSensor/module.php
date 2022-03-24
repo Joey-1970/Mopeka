@@ -172,7 +172,7 @@
 			$bitpos = $q * 10;
 			$bytepos = floor($bitpos / 8);
 			$off = $bitpos % 8;
-			$v = $MeasurementArray[$w + $bytepos] + $MeasurementArray[$w + $bytepos + 1] * 256;
+			$v = $DataArray[$w + $bytepos] + $DataArray[$w + $bytepos + 1] * 256;
 			$v = $v >> $off;
 			$dt = ($v & 0x1f) + 1;
 			$v = $v >> 5;
