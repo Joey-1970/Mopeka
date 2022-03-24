@@ -97,11 +97,13 @@
 		$Message = utf8_decode($Data->Buffer);		
 		$Message = trim($Message, "\x00..\x1F");
 		
+		
 		// Temporäre Auswertung
 		
 		If (strpos($Message, "> HCI Event: LE Meta Event") !== false) {
 			// neuer Datensatz beginnt
 			If ($this->GetBuffer("Data") <> "") {
+				$this->SetValue("LastUpdate", time() );
 				$this->DataEvaluation($this->GetBuffer("Data"));
 			}
 			
