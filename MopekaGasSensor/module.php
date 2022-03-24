@@ -131,8 +131,6 @@
 			$this->SendDebug("ReceiveData", $Message, 0);
 		}
 		
-		
-		//$this->SendDebug("ReceiveData", $Message, 0);
 	}
 	
 	private function DataEvaluation(string $Data)   
@@ -164,6 +162,37 @@
 		} else {
 			$this->SetValueWhenChanged("SyncPressed", false);
 		}
+		
+		$adv = array();
+		$w = 5;
+		$last_time = 0;
+		$ndx = 0;
+
+  		for ($q = 0; $q < 12; $q +=1 ) {
+			$bitpos = $q * 10;
+			$bytepos = floor($bitpos / 8);
+			$off = $bitpos % 8;
+			$v = $MeasurementArray[$w + $bytepos] + $MeasurementArray[$w + $bytepos + 1] * 256;
+			$v = $v >> $off;
+			$dt = ($v & 0x1f) + 1;
+			$v = $v >> 5;
+			$amp = $v & 0x1f;
+			$this_time = $last_time + $dt;
+			$last_time = $this_time;
+			if ($this_time > 255) {
+			  break;
+			}
+			if (!$amp) {
+			  continue;
+			}
+			$amp -= 1;
+			$amp *= 4;
+			$amp += 6;
+			$adv[$ndx] = array("a" => $amp, "i" => $this_time * 2);
+			$ndx += 1;
+		}
+       
+		$this->SendDebug("DataEvaluation", print_r($adv), 0);
 		
 	}		
       
