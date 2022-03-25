@@ -25,11 +25,12 @@
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
 		$this->RegisterVariableFloat("BatteryVoltage", "Betterie Spannung", "~Volt", 20);
-		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 30);
-		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 40);
-		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 50);
-		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 60);
-		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 70);
+		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
+		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
+		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 50);
+		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 60);
+		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 70);
+		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 80);
         }
        	
 	public function GetConfigurationForm() { 
@@ -141,6 +142,10 @@
 		
 		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
+		
+		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
+		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
+		$this->SetValueWhenChanged("BatteryPercentage", $Battery);
 		
 		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
 		If ($Temperature == 0) {
