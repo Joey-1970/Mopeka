@@ -151,6 +151,7 @@
 		If ($Temperature == 0) {
 			$this->SetValueWhenChanged("Temperature", -40);
 		} else {
+			$Temperature = max(-40, $Temperature);
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
