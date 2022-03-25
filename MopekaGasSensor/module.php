@@ -145,7 +145,7 @@
 		
 		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
 		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
-		$this->SetValueWhenChanged("BatteryPercentage", $Battery);
+		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
 		
 		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
 		If ($Temperature == 0) {
