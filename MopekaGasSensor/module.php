@@ -16,6 +16,7 @@
 		
             	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("MAC", "00:00:00:00:00:00");
+		$this->RegisterPropertyInteger("SensorType", 0);
 		$this->RegisterPropertyInteger("GasBottleValue", 0);
 		$this->RegisterPropertyInteger("IndividualLevel", 36);
 		
@@ -44,6 +45,10 @@
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox", "caption" => "Aktiv"); 
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+		$arrayOptions = array();
+		$arrayOptions[] = array("label" => "Gas Sensor Standard", "value" => 0);
+		$arrayOptions[] = array("label" => "Gas Sensor Pro", "value" => 1);
+		$arrayElements[] = array("type" => "Select", "name" => "SensorType", "caption" => "Sensor-Typ", "options" => $arrayOptions );
 		$arrayOptions = array();
 		$arrayOptions[] = array("label" => "3 kg", "value" => 3);
 		$arrayOptions[] = array("label" => "5 kg", "value" => 5);
@@ -105,7 +110,12 @@
 			// neuer Datensatz beginnt
 			If ($this->GetBuffer("Data") <> "") {
 				$this->SetValue("LastUpdate", time() );
-				$this->DataEvaluation($this->GetBuffer("Data"));
+				If ($this->ReadPropertyInteger("SensorType") == 0) {
+					$this->DataEvaluationGasStandard($this->GetBuffer("Data"));
+				}
+				elseIf ($this->ReadPropertyInteger("SensorType") == 1) {
+					$this->DataEvaluationGasPro($this->GetBuffer("Data"));
+				}
 			}
 			
 			$this->SetBuffer("MAC", "0");
@@ -134,11 +144,11 @@
 		
 	}
 	
-	private function DataEvaluation(string $Data)   
+	private function DataEvaluationGasStandard(string $Data)   
 	{
 		$DataArray = array();
 		$DataArray = $this->hex2ByteArray($Data);
-		$this->SendDebug("DataEvaluation", serialize($DataArray), 0);
+		$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
 		
 		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
@@ -198,11 +208,51 @@
 			$ndx += 1;
 		}
        
-		$this->SendDebug("DataEvaluation", serialize($adv), 0);
+		$this->SendDebug("DataEvaluationGasStandard", serialize($adv), 0);
 		
 	}		
       
-	 
+	private function DataEvaluationGasPro(string $Data)   
+	{
+		$DataArray = array();
+		$DataArray = $this->hex2ByteArray($Data);
+		$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
+		
+		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
+		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
+		
+		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
+		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
+		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
+		
+		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
+		If ($Temperature == 0) {
+			$this->SetValueWhenChanged("Temperature", -40);
+		} else {
+			$Temperature = max(-40, $Temperature);
+			$this->SetValueWhenChanged("Temperature", $Temperature);
+		}
+		
+		$UpdateRate = ($DataArray[4] & 0x40);
+		If ($UpdateRate > 0) {
+			$this->SetValueWhenChanged("UpdateRate", true);
+		} else {
+			$this->SetValueWhenChanged("UpdateRate", false);
+		}
+		
+		$SyncPressed = ($DataArray[4] & 0x80);
+		If ($SyncPressed > 0) {
+			$this->SetValueWhenChanged("SyncPressed", true);
+		} else {
+			$this->SetValueWhenChanged("SyncPressed", false);
+		}
+		
+		
+		
+		$this->SendDebug("DataEvaluationGasPro", serialize($adv), 0);
+		
+	}	
+	    
 	private function hex2ByteArray($hexString) 
 	{
   		$string = hex2bin($hexString);
