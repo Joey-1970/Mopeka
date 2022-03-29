@@ -30,8 +30,9 @@
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
 		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 50);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 60);
-		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 70);
-		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 80);
+		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
+		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 80);
+		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 90);
         }
        	
 	public function GetConfigurationForm() { 
@@ -218,38 +219,52 @@
 		$DataArray = $this->hex2ByteArray($Data);
 		$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
 		
-		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
+		/*
+		//      MA MA HW BAT TEMP Q  Q  MAC MAC MAC XACEL YACEL
+        	//      1  2  3  4   5    6  7  8   9   10  11    12
+        
+        
+      
+       
+       
+      
+        
+        
+        $level_mm = $tank * (0.573045+(-0.002822*$temp_raw)+(-0.00000535*$temp_raw*$temp_raw));
+        if($debug === TRUE){echo "Füllstand: ".$level_mm."mm";}
+        $level_pro = ($level_mm / $provoll)*100;
+        if($debug === TRUE){echo " entspricht ".$level_pro."%".PHP_EOL; }
+		*/
+		
+		$Battery = (($DataArray[4] & 0x7F) / 32);
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
 		
 		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
 		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
 		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
 		
-		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
+		$Temperature_RAW = $DataArray[5] & 0x7f;
+		$Temperature = $Temperature_RAW - 40;
 		If ($Temperature == 0) {
 			$this->SetValueWhenChanged("Temperature", -40);
 		} else {
-			$Temperature = max(-40, $Temperature);
+			$Temperature = max( -40, $Temperature);
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
-		$UpdateRate = ($DataArray[4] & 0x40);
-		If ($UpdateRate > 0) {
-			$this->SetValueWhenChanged("UpdateRate", true);
-		} else {
-			$this->SetValueWhenChanged("UpdateRate", false);
-		}
+		$QualityStars = $DataArray[7] >> 6;
+		$QualityStars = min(3, max(0, $QualityStars));
+		$this->SetValueWhenChanged("QualityStars", $QualityStars);
 		
-		$SyncPressed = ($DataArray[4] & 0x80);
-		If ($SyncPressed > 0) {
-			$this->SetValueWhenChanged("SyncPressed", true);
-		} else {
-			$this->SetValueWhenChanged("SyncPressed", false);
-		}
+		$TankLevel = ($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
+        
+		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
+       
+		$TankLevel_rel = $TankLevel_mm / 400) * 100; // 400 Konstante die noch angepasst werden muss
+     
+		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
+        
 		
-		
-		
-		$this->SendDebug("DataEvaluationGasPro", serialize($adv), 0);
 		
 	}	
 	    
