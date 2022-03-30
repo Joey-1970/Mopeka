@@ -102,11 +102,11 @@
 		// Empfangene Daten vom I/O
 	    	$Data = json_decode($JSONString);
 		$Message = utf8_decode($Data->Buffer);		
-		$Message = trim($Message, "\x00..\x1F");
-		
+		//$Message = trim($Message, "\x00..\x1F");
+		$this->SendDebug("ReceiveData", $Message, 0);
 		
 		// Temporäre Auswertung
-		
+		/*
 		If (strpos($Message, "> HCI Event: LE Meta Event") !== false) {
 			// neuer Datensatz beginnt
 			If ($this->GetBuffer("Data") <> "") {
@@ -142,7 +142,7 @@
 			$this->SetBuffer("RSSI", $Message);
 			$this->SendDebug("ReceiveData", $Message, 0);
 		}
-		
+		*/
 	}
 	
 	private function DataEvaluationGasStandard(string $Data)   
