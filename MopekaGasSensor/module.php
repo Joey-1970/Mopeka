@@ -260,7 +260,7 @@
         
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
        
-		$TankLevel_rel = $TankLevel_mm / 400) * 100; // 400 Konstante die noch angepasst werden muss
+		$TankLevel_rel = ($TankLevel_mm / 400) * 100; // 400 Konstante die noch angepasst werden muss
      
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
         
