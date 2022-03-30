@@ -256,7 +256,7 @@
 		$QualityStars = min(3, max(0, $QualityStars));
 		$this->SetValueWhenChanged("QualityStars", $QualityStars);
 		
-		$TankLevel = ($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
+		$TankLevel = (($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
         
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
        
