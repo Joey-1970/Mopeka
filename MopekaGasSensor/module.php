@@ -101,7 +101,7 @@
 	{
 		// Empfangene Daten vom I/O
 	    	$Data = json_decode($JSONString);
-		$Message = utf8_decode($Data->Buffer);		
+		$Message = utf8_decode($Data->id);		
 		//$Message = trim($Message, "\x00..\x1F");
 		$this->SendDebug("ReceiveData", $Message, 0);
 		
