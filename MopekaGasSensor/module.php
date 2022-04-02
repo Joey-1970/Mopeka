@@ -103,7 +103,7 @@
 	    	$Data = json_decode($JSONString);
 		//$Message = utf8_decode($Data);		
 		//$Message = trim($Message, "\x00..\x1F");
-		$this->SendDebug("ReceiveData", $Data, 0);
+		$this->SendDebug("ReceiveData", serialize($Data), 0);
 		
 		// Temporäre Auswertung
 		/*
