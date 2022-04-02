@@ -101,9 +101,21 @@
 	{
 		// Empfangene Daten vom I/O
 	    	$Data = json_decode($JSONString);
-		//$Message = utf8_decode($Data);		
-		//$Message = trim($Message, "\x00..\x1F");
-		$this->SendDebug("ReceiveData", serialize($Data), 0);
+		if (isset($Data->PacketType)) {
+	    		$PacketType = utf8_decode($Data->PacketType);
+		} else {
+			return;
+		}
+		$QualityOfService = utf8_decode($Data->QualityOfService);
+		$Retain = utf8_decode($Data->Retain);
+		$Topic = utf8_decode($Data->Topic);
+		$MainTopic = $this->ReadPropertyString("Topic");
+		$Payload = utf8_decode($Data->Payload);
+		
+		
+		$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
+		
+		//$this->ShowMQTTData($PacketType, $QualityOfService, $Retain, $Topic, $Payload);
 		
 		// Temporäre Auswertung
 		/*
