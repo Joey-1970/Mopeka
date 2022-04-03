@@ -109,12 +109,18 @@
 		$QualityOfService = utf8_decode($Data->QualityOfService);
 		$Retain = utf8_decode($Data->Retain);
 		$Topic = utf8_decode($Data->Topic);
-		$MainTopic = $this->ReadPropertyString("Topic");
 		$Payload = utf8_decode($Data->Payload);
 		
+		$PayloadData = json_decode($Payload);
+		$ID = utf8_decode($PayloadData->id);
+		$RSSI = utf8_decode($PayloadData->rssi);
+		$Brand = utf8_decode($PayloadData->brand);
+		$Model = utf8_decode($PayloadData->model);
+		$Model_ID = utf8_decode($PayloadData->model_id);
 		
 		$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
-		
+		$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
+
 		//$this->ShowMQTTData($PacketType, $QualityOfService, $Retain, $Topic, $Payload);
 		
 		// Temporäre Auswertung
