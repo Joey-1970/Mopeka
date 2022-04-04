@@ -133,49 +133,6 @@
 			}
 		}	
 		
-		//  {"manufacturerdata": "0d0000028a5c1fbc8181040f34600000081800010317bd5716", "id": "FC:45:C3:BD:57:16", "rssi": -46}
-		// 04.04.2022, 14:04:20 |          ReceiveData | PacketType: 3 QualityOfService: 0 Retain:  Topic: home/TheengsGateway/BTtoMQTT/FD84BADB79C2 Payload: {"manufacturerdata": "5900035d2abe83db79c2c9f6", "id": "FD:84:BA:DB:79:C2", "rssi": -48}
-		// 59 00 03 5d 2a be 83 db 79 c2 c9 f6
-		//$this->ShowMQTTData($PacketType, $QualityOfService, $Retain, $Topic, $Payload);
-		
-		// Temporäre Auswertung
-		/*
-		If (strpos($Message, "> HCI Event: LE Meta Event") !== false) {
-			// neuer Datensatz beginnt
-			If ($this->GetBuffer("Data") <> "") {
-				$this->SetValue("LastUpdate", time() );
-				If ($this->ReadPropertyInteger("SensorType") == 0) {
-					$this->DataEvaluationGasStandard($this->GetBuffer("Data"));
-				}
-				elseIf ($this->ReadPropertyInteger("SensorType") == 1) {
-					$this->DataEvaluationGasPro($this->GetBuffer("Data"));
-				}
-			}
-			
-			$this->SetBuffer("MAC", "0");
-			$this->SetBuffer("Data", "");
-			$this->SetBuffer("RSSI", "");
-		}
-		
-		If (strpos($Message, strtoupper($this->ReadPropertyString("MAC"))) !== false) {
-			//$this->SendDebug("ReceiveData", $Message, 0);
-			$this->SendDebug("ReceiveData", "MAC stimmt ueberein", 0);
-			$this->SetBuffer("MAC", "1");
-		}
-		
-		If ( (strpos($Message, "Data: ") !== false) AND ($this->GetBuffer("MAC") == "1") ) {
-			// Daten
-			$Message = str_replace('Data: ', '', $Message);
-			$this->SetBuffer("Data", $Message);
-			$this->SendDebug("ReceiveData", $Message, 0);
-		}
-		If ((strpos($Message, "RSSI: ") !== false) AND ($this->GetBuffer("MAC") == "1")) {
-			// RSSI
-			$Message = str_replace('RSSI: ', '', $Message);
-			$this->SetBuffer("RSSI", $Message);
-			$this->SendDebug("ReceiveData", $Message, 0);
-		}
-		*/
 	}
 	
 	private function DataEvaluationGasStandard(string $Data)   
@@ -250,23 +207,11 @@
 	{
 		$DataArray = array();
 		$DataArray = $this->hex2ByteArray($Data);
-		$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
+		//$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
 		
 		/*
-		//      MA MA HW BAT TEMP Q  Q  MAC MAC MAC XACEL YACEL
-        	//      1  2  3  4   5    6  7  8   9   10  11    12
-        
-        
-      
-       
-       
-      
-        
-        
-        $level_mm = $tank * (0.573045+(-0.002822*$temp_raw)+(-0.00000535*$temp_raw*$temp_raw));
-        if($debug === TRUE){echo "Füllstand: ".$level_mm."mm";}
-        $level_pro = ($level_mm / $provoll)*100;
-        if($debug === TRUE){echo " entspricht ".$level_pro."%".PHP_EOL; }
+		MA MA HW BAT TEMP Q  Q  MAC MAC MAC XACEL YACEL
+        	1  2  3  4   5    6  7  8   9   10  11    12
 		*/
 		
 		$Battery = (($DataArray[4] & 0x7F) / 32);
