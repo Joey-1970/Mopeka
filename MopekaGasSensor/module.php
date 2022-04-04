@@ -114,12 +114,16 @@
 		$PayloadData = json_decode($Payload);
 		$ID = utf8_decode($PayloadData->id);
 		$RSSI = utf8_decode($PayloadData->rssi);
-		$Brand = utf8_decode($PayloadData->brand);
-		$Model = utf8_decode($PayloadData->model);
-		$Model_ID = utf8_decode($PayloadData->model_id);
+		$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
 		
 		$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
-		$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
+		//$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
+		
+		If ($ID == strtoupper($this->ReadPropertyString("MAC")) {
+			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
+		}	
+		
+		//  {"manufacturerdata": "0d0000028a5c1fbc8181040f34600000081800010317bd5716", "id": "FC:45:C3:BD:57:16", "rssi": -46}
 
 		//$this->ShowMQTTData($PacketType, $QualityOfService, $Retain, $Topic, $Payload);
 		
