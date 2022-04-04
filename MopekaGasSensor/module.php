@@ -116,14 +116,21 @@
 		$RSSI = utf8_decode($PayloadData->rssi);
 		$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
 		
-		$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
+		//$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
 		//$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
 		
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
+			If ($this->ReadPropertyInteger("SensorType") == 0) {
+				$this->DataEvaluationGasStandard($RAW_Data);
+			}
+			elseIf ($this->ReadPropertyInteger("SensorType") == 1) {
+				$this->DataEvaluationGasPro($RAW_Data);
+			}
 		}	
 		
 		//  {"manufacturerdata": "0d0000028a5c1fbc8181040f34600000081800010317bd5716", "id": "FC:45:C3:BD:57:16", "rssi": -46}
+		// 04.04.2022, 14:04:20 |          ReceiveData | PacketType: 3 QualityOfService: 0 Retain:  Topic: home/TheengsGateway/BTtoMQTT/FD84BADB79C2 Payload: {"manufacturerdata": "5900035d2abe83db79c2c9f6", "id": "FD:84:BA:DB:79:C2", "rssi": -48}
 
 		//$this->ShowMQTTData($PacketType, $QualityOfService, $Retain, $Topic, $Payload);
 		
