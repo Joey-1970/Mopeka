@@ -33,6 +33,7 @@
 		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
 		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 80);
 		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 90);
+		$this->RegisterVariableInteger("RSSI", "RSSI", "", 100);
         }
        	
 	public function GetConfigurationForm() { 
@@ -121,17 +122,20 @@
 		
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
+			$this->SetValue("LastUpdate", time() );
+			$this->SetValueWhenChanged("RSSI", $RSSI);
+			
 			If ($this->ReadPropertyInteger("SensorType") == 0) {
 				$this->DataEvaluationGasStandard($RAW_Data);
 			}
 			elseIf ($this->ReadPropertyInteger("SensorType") == 1) {
-				//$this->DataEvaluationGasPro($RAW_Data);
+				$this->DataEvaluationGasPro($RAW_Data);
 			}
 		}	
 		
 		//  {"manufacturerdata": "0d0000028a5c1fbc8181040f34600000081800010317bd5716", "id": "FC:45:C3:BD:57:16", "rssi": -46}
 		// 04.04.2022, 14:04:20 |          ReceiveData | PacketType: 3 QualityOfService: 0 Retain:  Topic: home/TheengsGateway/BTtoMQTT/FD84BADB79C2 Payload: {"manufacturerdata": "5900035d2abe83db79c2c9f6", "id": "FD:84:BA:DB:79:C2", "rssi": -48}
-
+		// 59 00 03 5d 2a be 83 db 79 c2 c9 f6
 		//$this->ShowMQTTData($PacketType, $QualityOfService, $Retain, $Topic, $Payload);
 		
 		// Temporäre Auswertung
