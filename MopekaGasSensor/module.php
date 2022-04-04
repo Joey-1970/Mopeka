@@ -125,7 +125,7 @@
 				$this->DataEvaluationGasStandard($RAW_Data);
 			}
 			elseIf ($this->ReadPropertyInteger("SensorType") == 1) {
-				$this->DataEvaluationGasPro($RAW_Data);
+				//$this->DataEvaluationGasPro($RAW_Data);
 			}
 		}	
 		
@@ -180,14 +180,14 @@
 		$DataArray = $this->hex2ByteArray($Data);
 		$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
 		
-		$Battery = ($DataArray[3] / 256.0) * 2.0 + 1.5;
+		$Battery = ($DataArray[5] / 256.0) * 2.0 + 1.5;
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
 		
 		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
 		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
 		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
 		
-		$Temperature = (($DataArray[4] & 0x3f)- 25.0) * 1.776964;
+		$Temperature = (($DataArray[6] & 0x3f)- 25.0) * 1.776964;
 		If ($Temperature == 0) {
 			$this->SetValueWhenChanged("Temperature", -40);
 		} else {
@@ -195,14 +195,14 @@
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
-		$UpdateRate = ($DataArray[4] & 0x40);
+		$UpdateRate = ($DataArray[6] & 0x40);
 		If ($UpdateRate > 0) {
 			$this->SetValueWhenChanged("UpdateRate", true);
 		} else {
 			$this->SetValueWhenChanged("UpdateRate", false);
 		}
 		
-		$SyncPressed = ($DataArray[4] & 0x80);
+		$SyncPressed = ($DataArray[6] & 0x80);
 		If ($SyncPressed > 0) {
 			$this->SetValueWhenChanged("SyncPressed", true);
 		} else {
@@ -210,7 +210,7 @@
 		}
 		
 		$adv = array();
-		$w = 5;
+		$w = 7;
 		$last_time = 0;
 		$ndx = 0;
 
