@@ -119,7 +119,7 @@
 		$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
 		//$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
 		
-		If ($ID == strtoupper($this->ReadPropertyString("MAC")) {
+		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
 		}	
 		
