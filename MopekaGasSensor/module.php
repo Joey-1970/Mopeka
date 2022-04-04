@@ -212,7 +212,23 @@
 		/*
 		MA MA HW BAT TEMP Q  Q  MAC MAC MAC XACEL YACEL
         	1  2  3  4   5    6  7  8   9   10  11    12
+		59 00 03 5d  2c   c1 83 db  79  c2  c4    f6
+		
+
+		self.ManufacturerId = data[1] + (data[2] << 8)
+		if self.ManufacturerId != MOPEKA_MANUFACTURE_ID:
+		    raise Exception(
+			f"Advertising Data has Unsupported Manufacturer ID 0x{self.ManufacturerId}"
+		    )
+
+		self.HardwareId = HardwareId(data[3])
+		if self.HardwareId != HardwareId.STD_BOTTOM_UP_PROPANE:
+		    raise Exception(
+			f"Advertising Data has Unsupported Hardware ID {self.HardwareId}"
+		    )
+
 		*/
+
 		
 		$Battery = (($DataArray[4] & 0x7F) / 32);
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
@@ -228,6 +244,13 @@
 		} else {
 			$Temperature = max( -40, $Temperature);
 			$this->SetValueWhenChanged("Temperature", $Temperature);
+		}
+		
+		$SyncPressed = ($DataArray[6] & 0x80);
+		If ($SyncPressed > 0) {
+			$this->SetValueWhenChanged("SyncPressed", true);
+		} else {
+			$this->SetValueWhenChanged("SyncPressed", false);
 		}
 		
 		$QualityStars = $DataArray[7] >> 6;
