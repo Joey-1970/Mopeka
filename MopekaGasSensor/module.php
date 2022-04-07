@@ -116,7 +116,7 @@
 		
 		$PayloadData = json_decode($Payload);
 		$ID = utf8_decode($PayloadData->id);
-		$RSSI = utf8_decode($PayloadData->rssi);
+		
 		
 		//$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
 		//$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
@@ -128,14 +128,14 @@
 			$DataArray = $this->hex2ByteArray($RAW_Data);
 			
 			//$this->SendDebug("ReceiveData", serialize($DataArray), 0);
-			
+			$RSSI = utf8_decode($PayloadData->rssi);
 			$this->SetValueWhenChanged("RSSI", $RSSI);
 			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
 			
-			If ($DataArray[1] == 0x0d { // Standard
+			If ($DataArray[1] == 0x0d) { // Standard
 				$this->DataEvaluationGasStandard(serialize($DataArray));
 			}
-			elseIf ($DataArray[1] == 0x59 { // Pro
+			elseIf ($DataArray[1] == 0x59) { // Pro
 				$this->DataEvaluationGasPro(serialize($DataArray));
 			}
 		}	
