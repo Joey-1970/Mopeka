@@ -116,18 +116,15 @@
 		
 		$PayloadData = json_decode($Payload);
 		$ID = utf8_decode($PayloadData->id);
-		
-		
-		//$this->SendDebug("ReceiveData", "PacketType: ".$PacketType." QualityOfService: ".$QualityOfService." Retain: ".$Retain." Topic: ".$Topic." Payload: ".$Payload, 0);
-		//$this->SendDebug("ReceiveData", "ID: ".$ID." RSSI: ".$RSSI." Brand: ".$Brand." Model: ".$Model." Model_Id: ".$Model_ID, 0);
-		
+	
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SetValue("LastUpdate", time() );
 			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
 			$DataArray = array();
 			$DataArray = $this->hex2ByteArray($RAW_Data);
 			
-			//$this->SendDebug("ReceiveData", serialize($DataArray), 0);
+			$this->SendDebug("ReceiveData", serialize($DataArray), 0);
+			
 			$RSSI = utf8_decode($PayloadData->rssi);
 			$this->SetValueWhenChanged("RSSI", $RSSI);
 			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
@@ -145,7 +142,7 @@
 	private function DataEvaluationGasStandard(string $Data)   
 	{
 		$DataArray = array();
-		$DataArray = unserialize($DataArray); //$this->hex2ByteArray($Data);
+		$DataArray = unserialize($Data); //$this->hex2ByteArray($Data);
 		$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
 		
 		$Battery = ($DataArray[5] / 256.0) * 2.0 + 1.5;
@@ -213,7 +210,7 @@
 	private function DataEvaluationGasPro(string $Data)   
 	{
 		$DataArray = array();
-		$DataArray = unserialize($DataArray); //$this->hex2ByteArray($Data);
+		$DataArray = unserialize($Data); //$this->hex2ByteArray($Data);
 		//$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
 		
 		/*
