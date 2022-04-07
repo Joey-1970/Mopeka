@@ -16,7 +16,6 @@
 		
             	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("MAC", "00:00:00:00:00:00");
-		//$this->RegisterPropertyInteger("SensorType", 0);
 		$this->RegisterPropertyInteger("GasBottleValue", 0);
 		$this->RegisterPropertyInteger("IndividualLevel", 36);
 		
@@ -28,12 +27,11 @@
 		$this->RegisterVariableFloat("BatteryVoltage", "Betterie Spannung", "~Volt", 20);
 		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
-		$this->RegisterVariableInteger("Signal", "Signal-Qualität", "~Intensity.100", 50);
+		$this->RegisterVariableInteger("RSSI", "RSSI", "", 50);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 60);
 		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
 		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 80);
 		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 90);
-		$this->RegisterVariableInteger("RSSI", "RSSI", "", 100);
         }
        	
 	public function GetConfigurationForm() { 
@@ -47,12 +45,7 @@
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox", "caption" => "Aktiv"); 
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
-		/*
-		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "Gas Sensor Standard", "value" => 0);
-		$arrayOptions[] = array("label" => "Gas Sensor Pro", "value" => 1);
-		$arrayElements[] = array("type" => "Select", "name" => "SensorType", "caption" => "Sensor-Typ", "options" => $arrayOptions );
-		*/
+
 		$arrayOptions = array();
 		$arrayOptions[] = array("label" => "3 kg", "value" => 3);
 		$arrayOptions[] = array("label" => "5 kg", "value" => 5);
