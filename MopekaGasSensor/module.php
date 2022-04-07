@@ -122,14 +122,19 @@
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SetValue("LastUpdate", time() );
 			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
+			$DataArray = array();
+			$DataArray = $this->hex2ByteArray($RAW_Data);
+			
+			//$this->SendDebug("ReceiveData", serialize($DataArray), 0);
+			
 			$this->SetValueWhenChanged("RSSI", $RSSI);
 			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
 			
-			If ($this->ReadPropertyInteger("SensorType") == 0) {
-				$this->DataEvaluationGasStandard($RAW_Data);
+			If ($DataArray[1] == 0x0d { // Standard
+				$this->DataEvaluationGasStandard(serialize($DataArray));
 			}
-			elseIf ($this->ReadPropertyInteger("SensorType") == 1) {
-				$this->DataEvaluationGasPro($RAW_Data);
+			elseIf ($DataArray[1] == 0x59 { // Pro
+				$this->DataEvaluationGasPro(serialize($DataArray));
 			}
 		}	
 		
@@ -138,7 +143,7 @@
 	private function DataEvaluationGasStandard(string $Data)   
 	{
 		$DataArray = array();
-		$DataArray = $this->hex2ByteArray($Data);
+		$DataArray = unserialize($DataArray); //$this->hex2ByteArray($Data);
 		$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
 		
 		$Battery = ($DataArray[5] / 256.0) * 2.0 + 1.5;
@@ -206,7 +211,7 @@
 	private function DataEvaluationGasPro(string $Data)   
 	{
 		$DataArray = array();
-		$DataArray = $this->hex2ByteArray($Data);
+		$DataArray = unserialize($DataArray); //$this->hex2ByteArray($Data);
 		//$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
 		
 		/*
