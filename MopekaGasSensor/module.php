@@ -123,17 +123,20 @@
 			$DataArray = array();
 			$DataArray = $this->hex2ByteArray($RAW_Data);
 			
-			$this->SendDebug("ReceiveData", serialize($DataArray), 0);
+			$this->SendDebug("ReceiveData", count($DataArray), 0);
 			
 			$RSSI = utf8_decode($PayloadData->rssi);
 			$this->SetValueWhenChanged("RSSI", $RSSI);
-			$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
+			//$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
 			
-			If ($DataArray[1] == 0x0d) { // Standard
+			If (($DataArray[1] == 0x0d) AND (count($DataArray) == 25)) { // Standard
 				$this->DataEvaluationGasStandard(serialize($DataArray));
 			}
-			elseIf ($DataArray[1] == 0x59) { // Pro
+			elseIf (($DataArray[1] == 0x59) AND (count($DataArray) == 12)) { // Pro
 				$this->DataEvaluationGasPro(serialize($DataArray));
+			}
+			else {
+				$this->SendDebug("ReceiveData", "Unbekannter Sensortyp!", 0);
 			}
 		}	
 		
