@@ -119,11 +119,10 @@
 	
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SetValue("LastUpdate", time() );
+			
 			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
 			$DataArray = array();
 			$DataArray = $this->hex2ByteArray($RAW_Data);
-			
-			$this->SendDebug("ReceiveData", count($DataArray), 0);
 			
 			$RSSI = utf8_decode($PayloadData->rssi);
 			$this->SetValueWhenChanged("RSSI", $RSSI);
