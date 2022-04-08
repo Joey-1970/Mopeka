@@ -115,7 +115,7 @@
 			
 			$OldTime = floatval($this->GetBuffer("UpdateRate"));
 			$this->SetValueWhenChanged("UpdateRate", microtime(true) - $OldTime);
-			$this->SetBuffer("UpdateRate", microtime(false));
+			$this->SetBuffer("UpdateRate", microtime(true));
 			
 			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
 			$DataArray = array();
