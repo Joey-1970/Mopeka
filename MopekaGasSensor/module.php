@@ -47,10 +47,10 @@
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
 
 		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "3 kg", "value" => 3);
-		$arrayOptions[] = array("label" => "5 kg", "value" => 5);
-		$arrayOptions[] = array("label" => "11 kg", "value" => 11);
-		$arrayOptions[] = array("label" => "33 kg", "value" => 33);
+		$arrayOptions[] = array("label" => "3 kg", "value" => 200); // Wert ungeprüft
+		$arrayOptions[] = array("label" => "5 kg", "value" => 300); // Wert ungeprüft
+		$arrayOptions[] = array("label" => "11 kg", "value" => 420);
+		$arrayOptions[] = array("label" => "33 kg", "value" => 600); // Wert ungeprüft
 		$arrayOptions[] = array("label" => "Individuell", "value" => 0);
 		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
@@ -242,7 +242,7 @@
         
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
        
-		$TankLevel_rel = ($TankLevel_mm / 400) * 100; // 400 Konstante die noch angepasst werden muss
+		$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100; // 400 Konstante die noch angepasst werden muss
      
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
         
