@@ -20,7 +20,7 @@
 		$this->RegisterPropertyInteger("IndividualLevel", 36);
 		
 		// Profile anlegen
-		
+		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 2);
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
@@ -30,7 +30,7 @@
 		$this->RegisterVariableInteger("RSSI", "RSSI", "", 50);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 60);
 		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
-		$this->RegisterVariableBoolean("UpdateRate", "Update Rate", "~Switch", 80);
+		$this->RegisterVariableFloat("UpdateRate", "Update Rate", "Mopeka.sek", 80);
 		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 90);
         }
        	
@@ -113,6 +113,10 @@
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SetValue("LastUpdate", time() );
 			
+			$OldTime = floatval($this->GetBuffer("UpdateRate"));
+			$this->SetValueWhenChanged("UpdateRate", microtime(true) - $OldTime);
+			$this->SetBuffer("UpdateRate", microtime(false));
+			
 			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
 			$DataArray = array();
 			$DataArray = $this->hex2ByteArray($RAW_Data);
@@ -156,8 +160,8 @@
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
-		$UpdateRate = ($DataArray[6] & 0x40);
-		$this->SetValueWhenChanged("UpdateRate", boolval($UpdateRate));
+		//$UpdateRate = ($DataArray[6] & 0x40);
+		//$this->SetValueWhenChanged("UpdateRate", boolval($UpdateRate));
 		
 		$SyncPressed = ($DataArray[6] & 0x80);
 		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
@@ -223,8 +227,8 @@
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
-		$UpdateRate = ($DataArray[5] & 0x40);
-		$this->SetValueWhenChanged("UpdateRate", boolval($UpdateRate));
+		//$UpdateRate = ($DataArray[5] & 0x40);
+		//$this->SetValueWhenChanged("UpdateRate", boolval($UpdateRate));
 		
 		$SyncPressed = ($DataArray[5] & 0x80);
 		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
@@ -259,22 +263,23 @@
         	}
     	}    
 	    
-	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
+	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
 	{
 	        if (!IPS_VariableProfileExists($Name))
 	        {
-	            IPS_CreateVariableProfile($Name, 1);
+	            IPS_CreateVariableProfile($Name, 2);
 	        }
 	        else
 	        {
 	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 1)
+	            if ($profile['ProfileType'] != 2)
 	                throw new Exception("Variable profile type does not match for profile " . $Name);
 	        }
 	        IPS_SetVariableProfileIcon($Name, $Icon);
 	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);        
-	}    
+	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
+	        IPS_SetVariableProfileDigits($Name, $Digits);
+	}
 
 }
 ?>
