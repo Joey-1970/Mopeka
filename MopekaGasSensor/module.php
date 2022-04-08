@@ -246,7 +246,7 @@
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
-		$SyncPressed = ($DataArray[6] & 0x80);
+		$SyncPressed = ($DataArray[5] & 0x80);
 		If ($SyncPressed > 0) {
 			$this->SetValueWhenChanged("SyncPressed", true);
 		} else {
