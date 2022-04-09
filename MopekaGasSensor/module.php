@@ -128,7 +128,7 @@
 			
 			If (($DataArray[1] == 0x0d) AND (count($DataArray) == 25)) { // Standard
 				$this->DataEvaluationGasStandard(serialize($DataArray));
-				$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
+				//$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
 			}
 			elseIf (($DataArray[1] == 0x59) AND (count($DataArray) == 12)) { // Pro
 				$this->DataEvaluationGasPro(serialize($DataArray));
@@ -144,7 +144,7 @@
 	{
 		$DataArray = array();
 		$DataArray = unserialize($Data); //$this->hex2ByteArray($Data);
-		$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
+		//$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
 		
 		$Battery = ($DataArray[5] / 256.0) * 2.0 + 1.5;
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
@@ -197,6 +197,26 @@
 		}
        
 		$this->SendDebug("DataEvaluationGasStandard", serialize($adv), 0);
+		
+		$last = 0;
+	    	$data = array();
+	    	$p = $adv;
+	    	if ($p) {
+			$last = -20;
+			for ($i = 0; $i < count($p); $i += 1) {
+		    		$time = round($p[$i]["i"] * 10);
+		    		$amp = round(($p[$i]["a"] / 512.0) * (159 / 128), 4);
+		    		if ($last + 20 !== $time) {
+					array_push($data, $last + 20, -0.02);
+					array_push($data, $time - 20, -0.02);
+		    		}
+		    		$last = $time;
+		    		array_push($data, $time, $amp);
+	      		}
+	      		array_push($data, $last + 20, -0.02);
+	      		array_push($data, 2000, -0.02);
+	    	}
+		$this->SendDebug("DataEvaluationGasStandard", serialize($data), 0);
 		
 	}		
       
