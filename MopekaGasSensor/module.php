@@ -225,12 +225,14 @@
 		for ($i = 0; $i < count($data); $i += 2) {
     			If ($data[$i + 1] > 0) {
         			$TankLevel = $data[$i];
+				break;
     			}
 		}
+		$this->SendDebug("DataEvaluationGasStandard", "TankLevel roh: ".$TankLevel, 0);
 		
 		If ($TankLevel > 0) {
 			$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
-
+			$this->SendDebug("DataEvaluationGasStandard", "TankLevel mm: ".$TankLevel_mm, 0);
 			$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
 			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
@@ -278,10 +280,10 @@
 		$this->SetValueWhenChanged("QualityStars", $QualityStars);
 		
 		$TankLevel = (($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
-        	//$this->SendDebug("DataEvaluationGasPro", $TankLevel, 0);
+        	$this->SendDebug("DataEvaluationGasPro", "TankLevel roh: ".$TankLevel, 0);
 		
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
-       
+       		$this->SendDebug("DataEvaluationGasPro", "TankLevel mm: ".$TankLevel_mm, 0);
 		$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
      		$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
