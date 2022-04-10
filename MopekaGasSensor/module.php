@@ -194,7 +194,7 @@
 			$ndx += 1;
 		}
        
-		$this->SendDebug("DataEvaluationGasStandard", serialize($adv), 0);
+		//$this->SendDebug("DataEvaluationGasStandard", serialize($adv), 0);
 		
 		$last = 0;
 	    	$data = array();
@@ -278,7 +278,7 @@
 		$this->SetValueWhenChanged("QualityStars", $QualityStars);
 		
 		$TankLevel = (($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
-        	$this->SendDebug("DataEvaluationGasPro", $TankLevel, 0);
+        	//$this->SendDebug("DataEvaluationGasPro", $TankLevel, 0);
 		
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
        
