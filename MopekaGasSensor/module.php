@@ -161,9 +161,6 @@
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
 		
-		//$UpdateRate = ($DataArray[6] & 0x40);
-		//$this->SetValueWhenChanged("UpdateRate", boolval($UpdateRate));
-		
 		$SyncPressed = ($DataArray[6] & 0x80);
 		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
 		
@@ -247,10 +244,7 @@
 			$Temperature = max( -40, $Temperature);
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 		}
-		
-		//$UpdateRate = ($DataArray[5] & 0x40);
-		//$this->SetValueWhenChanged("UpdateRate", boolval($UpdateRate));
-		
+				
 		$SyncPressed = ($DataArray[5] & 0x80);
 		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
 		
@@ -260,7 +254,8 @@
 		$this->SetValueWhenChanged("QualityStars", $QualityStars);
 		
 		$TankLevel = (($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
-        
+        	$this->SendDebug("DataEvaluationGasPro", $TankLevel, 0);
+		
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
        
 		$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
