@@ -153,7 +153,8 @@
 		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
 		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
 		
-		$Temperature = (($DataArray[6] & 0x3f)- 25.0) * 1.776964;
+		$Temperature_RAW = ($DataArray[6] & 0x3f);
+		$Temperature = (($DataArray[6] & 0x3f) - 25.0) * 1.776964;
 		If ($Temperature == 0) {
 			$this->SetValueWhenChanged("Temperature", -40);
 		} else {
@@ -213,7 +214,30 @@
 	      		array_push($data, $last + 20, -0.02);
 	      		array_push($data, 2000, -0.02);
 	    	}
-		$this->SendDebug("DataEvaluationGasStandard", serialize($data), 0);
+		else {
+			$this->SetValueWhenChanged("GasLevel", 0);
+			return;
+		}
+		
+		//$this->SendDebug("DataEvaluationGasStandard", serialize($data), 0);
+		
+		// Peak finden
+		for ($i = 0; $i < count($data); $i += 2) {
+    			If ($data[$i + 1] > 0) {
+        			$TankLevel = $data[$i];
+    			}
+		}
+		
+		If ($TankLevel > 0) {
+			$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
+
+			$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
+			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
+			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
+		}
+		else {
+			$this->SetValueWhenChanged("GasLevel", 0);
+		}
 		
 	}		
       
