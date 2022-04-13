@@ -128,7 +128,7 @@
 			
 			If (($DataArray[1] == 0x0d) AND (count($DataArray) == 25)) { // Standard
 				$this->DataEvaluationGasStandard(serialize($DataArray));
-				//$this->SendDebug("ReceiveData", "ID-Treffer: ".$ID." RSSI: ".$RSSI." Roh-Daten: ".$RAW_Data, 0);
+				$this->SendDebug("ReceiveData", " Roh-Daten: ".$RAW_Data, 0);
 			}
 			elseIf (($DataArray[1] == 0x59) AND (count($DataArray) == 12)) { // Pro
 				$this->DataEvaluationGasPro(serialize($DataArray));
@@ -219,16 +219,26 @@
 			return;
 		}
 		
+		
+		
 		//$this->SendDebug("DataEvaluationGasStandard", serialize($data), 0);
 		
 		// Peak finden
 		for ($i = 0; $i < count($data); $i += 2) {
     			If ($data[$i + 1] > 0) {
         			$TankLevel = $data[$i];
+				$Peak = $data[$i + 1];
 				break;
     			}
 		}
 		$this->SendDebug("DataEvaluationGasStandard", "TankLevel roh: ".$TankLevel, 0);
+		
+		
+		$lpg_butane_ratio = 1;
+		$c = 1040.71 - 4.87 * $Temperature_RAW - 137.5 * $lpg_butane_ratio - 0.0107 * $Temperature_RAW * $Temperature_RAW - 1.63 * $Temperature_RAW * $lpg_butane_ratio;
+		$this->SendDebug("DataEvaluationGasStandard", "c: ".$c, 0);
+		$this->SendDebug("DataEvaluationGasStandard", " t * c: ".($Peak * $c / 2), 0);
+		
 		
 		If ($TankLevel > 0) {
 			$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
