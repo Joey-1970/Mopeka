@@ -298,7 +298,10 @@
      		$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
         
+		$AcceloX = $DataArray[11];
+		$AcceloY = $DataArray[12];
 		
+		$this->SendDebug("DataEvaluationGasPro", "x: ".$AcceloX." y: ".$AcceloY, 0);
 		
 	}	
 	    
