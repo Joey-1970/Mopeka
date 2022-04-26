@@ -32,6 +32,9 @@
 		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
 		$this->RegisterVariableFloat("UpdateRate", "Update Rate", "Mopeka.sek", 80);
 		$this->RegisterVariableBoolean("SyncPressed", "Sync gedrückt", "~Switch", 90);
+		$this->RegisterVariableInteger("AcceloX", "Lage X-Wert", "", 100);
+		$this->RegisterVariableInteger("AcceloY", "Lage Y-Wert", "", 110);
+		$this->RegisterVariableBoolean("PositionWarning", "Positions Warnung", "~Switch", 120);
         }
        	
 	public function GetConfigurationForm() { 
@@ -299,9 +302,17 @@
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
         
 		$AcceloX = $this->TwosComplement($DataArray[11]);
+		$this->SetValueWhenChanged("AcceloX", $AcceloX);
 		$AcceloY = $this->TwosComplement($DataArray[12]);
+		$this->SetValueWhenChanged("AcceloY", $AcceloY);
 		
 		$this->SendDebug("DataEvaluationGasPro", "x: ".$AcceloX." y: ".$AcceloY, 0);
+		
+		if (($AcceloX <= 2) AND ($AcceloX >= -2) AND ($AcceloY <= 2) AND ($AcceloY >= -2)) {
+			$this->SetValueWhenChanged("PositionWarning", false);
+      		} else {
+        		$this->SetValueWhenChanged("PositionWarning", true);
+      		}
 		
 	}	
 	
