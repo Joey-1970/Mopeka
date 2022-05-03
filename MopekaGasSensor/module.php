@@ -24,7 +24,7 @@
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
-		$this->RegisterVariableFloat("BatteryVoltage", "Betterie Spannung", "~Volt", 20);
+		$this->RegisterVariableFloat("BatteryVoltage", "Batterie Spannung", "~Volt", 20);
 		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
 		$this->RegisterVariableInteger("RSSI", "RSSI", "", 50);
