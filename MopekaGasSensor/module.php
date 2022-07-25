@@ -111,7 +111,12 @@
 		$Payload = utf8_decode($Data->Payload);
 		
 		$PayloadData = json_decode($Payload);
-		$ID = utf8_decode($PayloadData->id);
+		
+		if(isset($PayloadData->id)){                                                                                                                                                                       
+                        $ID = utf8_decode($PayloadData->id);
+                } else {
+                        return;
+                }
 	
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
 			$this->SetValue("LastUpdate", time() );
