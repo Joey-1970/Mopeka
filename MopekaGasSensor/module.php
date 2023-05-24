@@ -129,14 +129,25 @@
 			$this->SetValueWhenChanged("UpdateRate", $UpdateRate);
 			$this->SetBuffer("UpdateRate", microtime(true));
 			
+			$Battery = utf8_decode($PayloadData->volt);
+			$this->SetValueWhenChanged("BatteryVoltage", $Battery);
 			
+			$BatteryPercentage = utf8_decode($PayloadData->batt);
+			$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
 			
+			$Temperature = utf8_decode($PayloadData->tempc);
+			$this->SetValueWhenChanged("Temperature", $Temperature);
 			
 			$RSSI = utf8_decode($PayloadData->rssi);
 			$this->SetValueWhenChanged("RSSI", $RSSI);
 			
-			$Temperature = utf8_decode($PayloadData->tempc);
-			$this->SetValueWhenChanged("Temperature", $Temperature);
+			$Level_cm = utf8_decode($PayloadData->lvl_cm);
+			$TankLevel_rel = (($Level_cm * 10) / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
+     			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
+			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
+			
+			$QualityStars = utf8_decode($PayloadData->quality);
+			$this->SetValueWhenChanged("QualityStars", $QualityStars);
 			
 			
 		}	
