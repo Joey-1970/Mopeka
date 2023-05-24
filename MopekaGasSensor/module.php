@@ -99,11 +99,19 @@
 	public function ReceiveData($JSONString) 
 	{
 		// Empfangene Daten vom I/O
-	    	
+	    	$Data = json_decode($JSONString);
 
+		if (isset($Data->PacketType)) {
+	    		$PacketType = utf8_decode($Data->PacketType);
+		} else {
+			return;
+		}
+		$QualityOfService = utf8_decode($Data->QualityOfService);
+		$Retain = utf8_decode($Data->Retain);
+		$Topic = utf8_decode($Data->Topic);
+		$Payload = utf8_decode($Data->Payload);
 		
-		$PayloadData = json_decode($JSONString);
-		$this->SendDebug("ReceiveData", " Datenempfang ".$JSONString, 0);
+		$PayloadData = json_decode($Payload);
 		
 		if(isset($PayloadData->id)){                                                                                                                                                                       
                         $ID = utf8_decode($PayloadData->id);
