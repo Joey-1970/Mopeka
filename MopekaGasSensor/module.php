@@ -103,10 +103,13 @@
 
 		
 		$PayloadData = json_decode($JSONString);
+		$this->SendDebug("ReceiveData", " PayloadData: ".$PayloadData, 0);
 		
 		if(isset($PayloadData->id)){                                                                                                                                                                       
                         $ID = utf8_decode($PayloadData->id);
+			$this->SendDebug("ReceiveData", " ID: ".$ID, 0);
                 } else {
+			$this->SendDebug("ReceiveData", " ID nicht gesetzt ", 0);
                         return;
                 }
 	
