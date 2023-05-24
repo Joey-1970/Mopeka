@@ -100,6 +100,44 @@
 	{
 		// Empfangene Daten vom I/O
 	    	$Data = json_decode($JSONString);
+
+		
+		$PayloadData = json_decode($Payload);
+		
+		if(isset($PayloadData->id)){                                                                                                                                                                       
+                        $ID = utf8_decode($PayloadData->id);
+                } else {
+                        return;
+                }
+	
+		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
+			$this->SetValue("LastUpdate", time() );
+			
+			$OldTime = floatval($this->GetBuffer("UpdateRate"));
+			$UpdateRate = min(99, max(0, microtime(true) - $OldTime));
+			$this->SetValueWhenChanged("UpdateRate", $UpdateRate);
+			$this->SetBuffer("UpdateRate", microtime(true));
+			
+			
+			
+			
+			$RSSI = utf8_decode($PayloadData->rssi);
+			$this->SetValueWhenChanged("RSSI", $RSSI);
+			
+			$Temperature = utf8_decode($PayloadData->tempc);
+			$this->SetValueWhenChanged("Temperature", $Temperature);
+			
+			
+		}	
+		
+	}
+	
+	/**
+	public function ReceiveData($JSONString) 
+	{
+		// Empfangene Daten vom I/O
+	    	$Data = json_decode($JSONString);
+
 		if (isset($Data->PacketType)) {
 	    		$PacketType = utf8_decode($Data->PacketType);
 		} else {
@@ -147,7 +185,8 @@
 		}	
 		
 	}
-	
+	**/
+	    
 	private function DataEvaluationGasStandard(string $Data)   
 	{
 		$DataArray = array();
