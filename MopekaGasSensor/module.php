@@ -99,10 +99,10 @@
 	public function ReceiveData($JSONString) 
 	{
 		// Empfangene Daten vom I/O
-	    	$Data = json_decode($JSONString);
+	    	
 
 		
-		$PayloadData = json_decode($Payload);
+		$PayloadData = json_decode($JSONString);
 		
 		if(isset($PayloadData->id)){                                                                                                                                                                       
                         $ID = utf8_decode($PayloadData->id);
