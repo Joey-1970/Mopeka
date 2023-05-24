@@ -149,7 +149,8 @@
 			$QualityStars = utf8_decode($PayloadData->quality);
 			$this->SetValueWhenChanged("QualityStars", $QualityStars);
 			
-			
+			$QualityStars = boolval(utf8_decode($PayloadData->sync));
+			$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
 		}	
 		
 	}
