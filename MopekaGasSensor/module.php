@@ -68,7 +68,7 @@
 		$arrayOptions[] = array("label" => "Individuell", "value" => 0);
 		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
 		
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Max-Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Max-Level", "minimum" => 1, "maximum" => 100, "suffix" => "cm");
 
 		$arrayActions = array(); 
 		
