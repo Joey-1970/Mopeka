@@ -370,7 +370,7 @@
 		
 		$MaxLevel = 0;
 		
-		If ($GasBottleValue == 0] {
+		If ($GasBottleValue == 0) {
 			$MaxLevel = $IndividualLevel * 10; // Indivudeller Max-Level in mm
 		}
 		else {
