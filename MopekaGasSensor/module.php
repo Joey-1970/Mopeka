@@ -63,7 +63,7 @@
 		$arrayOptions[] = array("label" => "Individuell", "value" => 0);
 		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
 		
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
+		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Max-Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
 
 		$arrayActions = array(); 
 		
@@ -149,7 +149,7 @@
 				$this->SetValueWhenChanged("Temperature", $Temperature);
 
 				$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
-				$TankLevel_rel = (($Level_cm * 10) / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
+				$TankLevel_rel = (($Level_cm * 10) / $this->GasBottleValue() ) * 100;
 				$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 				$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
 
@@ -333,7 +333,7 @@
 		
 		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
        		$this->SendDebug("DataEvaluationGasPro", "TankLevel mm: ".$TankLevel_mm, 0);
-		$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
+		$TankLevel_rel = ($TankLevel_mm / $this->GasBottleValue() ) * 100;
      		$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
         
@@ -352,6 +352,21 @@
 		
 	}	
 	
+	private function GasBottleValue() 
+	{    
+		$GasBottleValue = $this->ReadPropertyInteger("GasBottleValue");
+		$IndividualLevel = $this->ReadPropertyInteger("IndividualLevel");
+		
+		$MaxLevel = 0;
+		
+		If ($GasBottleValue == 0] {
+			$MaxLevel = $IndividualLevel * 10; // Indivudeller Max-Level in mm
+		}
+		else {
+			$MaxLevel = $GasBottleValue; // Max-Level nach Flaschentyp in mm
+		}
+	return $MaxLevel; 	
+	}	
 	private function TwosComplement(int $Number) 
 	{
     		if ($Number > 0xFF) { 
