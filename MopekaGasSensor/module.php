@@ -16,6 +16,7 @@
 		
             	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("MAC", "00:00:00:00:00:00");
+		$this->RegisterPropertyInteger("Gateway", 1);
 		$this->RegisterPropertyInteger("GasBottleValue", 0);
 		$this->RegisterPropertyInteger("IndividualLevel", 36);
 		
@@ -48,6 +49,11 @@
 		$arrayElements = array(); 
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox", "caption" => "Aktiv"); 
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+		
+		$arrayOptions = array();
+		$arrayOptions[] = array("label" => "OpenMQTTGateway", "value" => 1);
+		$arrayOptions[] = array("label" => "TheengsGateway", "value" => 2);
+		$arrayElements[] = array("type" => "Select", "name" => "Gateway", "caption" => "Gateway", "options" => $arrayOptions );
 
 		$arrayOptions = array();
 		$arrayOptions[] = array("label" => "3 kg", "value" => 200); // Wert ungeprüft
@@ -56,6 +62,7 @@
 		$arrayOptions[] = array("label" => "33 kg", "value" => 600); // Wert ungeprüft
 		$arrayOptions[] = array("label" => "Individuell", "value" => 0);
 		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
+		
 		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Level", "minimum" => 0, "maximum" => 100, "suffix" => "cm");
 
 		$arrayActions = array(); 
@@ -115,13 +122,12 @@
 		
 		if(isset($PayloadData->id)){                                                                                                                                                                       
                         $ID = utf8_decode($PayloadData->id);
-			$this->SendDebug("ReceiveData", " ID: ".$ID, 0);
                 } else {
-			$this->SendDebug("ReceiveData", " ID nicht gesetzt ", 0);
                         return;
                 }
 	
 		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
+			$Gateway = $this->ReadPropertyInteger("Gateway");
 			$this->SetValue("LastUpdate", time() );
 			
 			$OldTime = floatval($this->GetBuffer("UpdateRate"));
@@ -129,86 +135,49 @@
 			$this->SetValueWhenChanged("UpdateRate", $UpdateRate);
 			$this->SetBuffer("UpdateRate", microtime(true));
 			
-			$Battery = utf8_decode($PayloadData->volt);
-			$this->SetValueWhenChanged("BatteryVoltage", $Battery);
-			
-			$BatteryPercentage = utf8_decode($PayloadData->batt);
-			$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
-			
-			$Temperature = utf8_decode($PayloadData->tempc);
-			$this->SetValueWhenChanged("Temperature", $Temperature);
-			
 			$RSSI = utf8_decode($PayloadData->rssi);
 			$this->SetValueWhenChanged("RSSI", $RSSI);
 			
-			$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
-			$TankLevel_rel = (($Level_cm * 10) / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
-     			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
-			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
-			
-			$QualityStars = utf8_decode($PayloadData->quality);
-			$this->SetValueWhenChanged("QualityStars", $QualityStars);
-			
-			$SyncPressed = boolval(utf8_decode($PayloadData->sync));
-			$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
-		}	
-		
-	}
-	
-	/**
-	public function ReceiveData($JSONString) 
-	{
-		// Empfangene Daten vom I/O
-	    	$Data = json_decode($JSONString);
+			If ($Gateway == 1) {
+				$Battery = utf8_decode($PayloadData->volt);
+				$this->SetValueWhenChanged("BatteryVoltage", $Battery);
 
-		if (isset($Data->PacketType)) {
-	    		$PacketType = utf8_decode($Data->PacketType);
-		} else {
-			return;
-		}
-		$QualityOfService = utf8_decode($Data->QualityOfService);
-		$Retain = utf8_decode($Data->Retain);
-		$Topic = utf8_decode($Data->Topic);
-		$Payload = utf8_decode($Data->Payload);
-		
-		$PayloadData = json_decode($Payload);
-		
-		if(isset($PayloadData->id)){                                                                                                                                                                       
-                        $ID = utf8_decode($PayloadData->id);
-                } else {
-                        return;
-                }
-	
-		If ($ID == strtoupper($this->ReadPropertyString("MAC"))) {
-			$this->SetValue("LastUpdate", time() );
-			
-			$OldTime = floatval($this->GetBuffer("UpdateRate"));
-			$UpdateRate = min(99, max(0, microtime(true) - $OldTime));
-			$this->SetValueWhenChanged("UpdateRate", $UpdateRate);
-			$this->SetBuffer("UpdateRate", microtime(true));
-			
-			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
-			$DataArray = array();
-			$DataArray = $this->hex2ByteArray($RAW_Data);
-			
-			$RSSI = utf8_decode($PayloadData->rssi);
-			$this->SetValueWhenChanged("RSSI", $RSSI);
-			
-			
-			If (($DataArray[1] == 0x0d) AND (count($DataArray) == 25)) { // Standard
-				$this->DataEvaluationGasStandard(serialize($DataArray));
-				$this->SendDebug("ReceiveData", " Roh-Daten: ".$RAW_Data, 0);
+				$BatteryPercentage = utf8_decode($PayloadData->batt);
+				$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
+
+				$Temperature = utf8_decode($PayloadData->tempc);
+				$this->SetValueWhenChanged("Temperature", $Temperature);
+
+				$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
+				$TankLevel_rel = (($Level_cm * 10) / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
+				$TankLevel_rel = min(100, max(0, $TankLevel_rel));
+				$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
+
+				$QualityStars = utf8_decode($PayloadData->quality);
+				$this->SetValueWhenChanged("QualityStars", $QualityStars);
+
+				$SyncPressed = boolval(utf8_decode($PayloadData->sync));
+				$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
 			}
-			elseIf (($DataArray[1] == 0x59) AND (count($DataArray) == 12)) { // Pro
-				$this->DataEvaluationGasPro(serialize($DataArray));
-			}
-			else {
-				$this->SendDebug("ReceiveData", "Unbekannter Sensortyp!", 0);
+			elseIf ($Gateway == 2) {
+				$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
+				$DataArray = array();
+				$DataArray = $this->hex2ByteArray($RAW_Data);
+				
+				If (($DataArray[1] == 0x0d) AND (count($DataArray) == 25)) { // Standard
+					$this->DataEvaluationGasStandard(serialize($DataArray));
+					$this->SendDebug("ReceiveData", " Roh-Daten: ".$RAW_Data, 0);
+				}
+				elseIf (($DataArray[1] == 0x59) AND (count($DataArray) == 12)) { // Pro
+					$this->DataEvaluationGasPro(serialize($DataArray));
+				}
+				else {
+					$this->SendDebug("ReceiveData", "Unbekannter Sensortyp!", 0);
+				}
 			}
 		}	
 		
 	}
-	**/
 	    
 	private function DataEvaluationGasStandard(string $Data)   
 	{
