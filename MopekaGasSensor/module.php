@@ -16,6 +16,8 @@
 		
             	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString("MAC", "00:00:00:00:00:00");
+		$this->RegisterPropertyString('MQTTBaseTopic', 'Mopeka2MQTT');
+        	$this->RegisterPropertyString('MQTTTopic', '');
 		$this->RegisterPropertyInteger("Gateway", 1);
 		$this->RegisterPropertyInteger("GasBottleValue", 0);
 		$this->RegisterPropertyInteger("IndividualLevel", 36);
@@ -50,6 +52,9 @@
 		$arrayElements[] = array("name" => "Open", "type" => "CheckBox", "caption" => "Aktiv"); 
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MAC", "caption" => "MAC", "validate" => "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
 		
+		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MQTTBaseTopic", "caption" => "MQTT Base Topic");
+		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MQTTTopic", "caption" => "MQTT Topic");
+		
 		$arrayOptions = array();
 		$arrayOptions[] = array("label" => "OpenMQTTGateway", "value" => 1);
 		$arrayOptions[] = array("label" => "TheengsGateway", "value" => 2);
@@ -76,7 +81,13 @@
                 // Diese Zeile nicht löschen
                 parent::ApplyChanges();
 		
-			
+		 //Setze Filter für ReceiveData
+		$Filter1 = preg_quote('"Topic":"' . $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '"');
+		$Filter2 = preg_quote('"Topic":"symcon/' . $this->ReadPropertyString('MQTTBaseTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/');
+		
+		$this->SendDebug('Filter ', '.*(' . $Filter1 . '|' . $Filter2 . ').*', 0);
+        	$this->SetReceiveDataFilter('.*(' . $Filter1 . '|' . $Filter2 . ').*');
+		
 		If ($this->ReadPropertyBoolean("Open") == true) {
 			If ($this->GetStatus() <> 102) {
 				$this->SetStatus(102);
