@@ -29,7 +29,7 @@
 		$this->RegisterVariableString("MAC", "MAC", "", 110);
 		
 		/**
-		Payload: {"uptime":7803,"version":"v1.5.1","discovery":false,"env":"esp32dev-ble","freemem":103880,"mqttport":"1024","mqttsecure":false,"tempc":48.88889,"freestack":1760,"rssi":-28,"SSID":"Paeper_Caravan","BSSID":"60:32:B1:BE:99:8E","ip":"192.168.1.106","mac":"A0:B7:65:58:DE:E4","lowpowermode":-1,"interval":55555,"intervalcnct":3600000,"scnct":119,"modules":["BT"]}
+		Payload: {"uptime":7803,"discovery":false,"freemem":103880,"mqttport":"1024","mqttsecure":false,"freestack":1760,"lowpowermode":-1,"interval":55555,"intervalcnct":3600000,"scnct":119,"modules":["BT"]}
 	
 		**/
         }
