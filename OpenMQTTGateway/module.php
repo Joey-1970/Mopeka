@@ -2,8 +2,6 @@
     // Klassendefinition
     class OpenMQTTGateway extends IPSModule 
     {
-	
-	    
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create() 
         {
@@ -24,7 +22,13 @@
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
+		
+		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
 		/**
+		
+		Topic: home/OpenMQTTGateway_ESP32_BLE/SYStoMQTT, 
+		Payload: {"uptime":7803,"version":"v1.5.1","discovery":false,"env":"esp32dev-ble","freemem":103880,"mqttport":"1024","mqttsecure":false,"tempc":48.88889,"freestack":1760,"rssi":-28,"SSID":"Paeper_Caravan","BSSID":"60:32:B1:BE:99:8E","ip":"192.168.1.106","mac":"A0:B7:65:58:DE:E4","lowpowermode":-1,"interval":55555,"intervalcnct":3600000,"scnct":119,"modules":["BT"]}
+
 		$this->RegisterVariableFloat("BatteryVoltage", "Batterie Spannung", "~Volt", 20);
 		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
@@ -102,16 +106,13 @@
 		
 		$PayloadData = json_decode($Payload);
 		
-		if(isset($PayloadData->id)){                                                                                                                                                                       
-                        $ID = utf8_decode($PayloadData->id);
-                } else {
-                        return;
-                }
-		
 		$this->SetValue("LastUpdate", time() );
 
 		$RSSI = utf8_decode($PayloadData->rssi);
 		$this->SetValueWhenChanged("RSSI", $RSSI);
+		
+		$Temperature = utf8_decode($PayloadData->tempc);
+		$this->SetValueWhenChanged("Temperature", $Temperature);
 		
 		/**
 		$Battery = utf8_decode($PayloadData->volt);
