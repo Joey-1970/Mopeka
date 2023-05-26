@@ -17,12 +17,14 @@
 		$this->RegisterPropertyString('MQTTBaseTopic', 'OpenMQTTGateway');
         	$this->RegisterPropertyString('MQTTTopic', '');
 	
-		
+		/**
 		// Profile anlegen
 		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 2);
+		**/
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
+		/**
 		$this->RegisterVariableFloat("BatteryVoltage", "Batterie Spannung", "~Volt", 20);
 		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
@@ -34,6 +36,7 @@
 		$this->RegisterVariableInteger("AcceloX", "Lage X-Wert", "", 100);
 		$this->RegisterVariableInteger("AcceloY", "Lage Y-Wert", "", 110);
 		$this->RegisterVariableBoolean("PositionWarning", "Positions Warnung", "~Switch", 120);
+		**/
         }
        	
 	public function GetConfigurationForm() { 
@@ -50,21 +53,6 @@
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MQTTBaseTopic", "caption" => "MQTT Base Topic");
 		$arrayElements[] = array("type" => "ValidationTextBox", "name" => "MQTTTopic", "caption" => "MQTT Topic");
 		
-		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "OpenMQTTGateway", "value" => 1);
-		$arrayOptions[] = array("label" => "TheengsGateway", "value" => 2);
-		$arrayElements[] = array("type" => "Select", "name" => "Gateway", "caption" => "Gateway", "options" => $arrayOptions );
-
-		$arrayOptions = array();
-		$arrayOptions[] = array("label" => "3 kg", "value" => 200); // Wert ungeprüft
-		$arrayOptions[] = array("label" => "5 kg", "value" => 300); // Wert ungeprüft
-		$arrayOptions[] = array("label" => "11 kg", "value" => 420);
-		$arrayOptions[] = array("label" => "33 kg", "value" => 600); // Wert ungeprüft
-		$arrayOptions[] = array("label" => "Individuell", "value" => 0);
-		$arrayElements[] = array("type" => "Select", "name" => "GasBottleValue", "caption" => "Gasflasche-Typ", "options" => $arrayOptions );
-		
-		$arrayElements[] = array("type" => "NumberSpinner", "name" => "IndividualLevel", "caption" => "Individueller Max-Level", "minimum" => 1, "maximum" => 100, "suffix" => "cm");
-
 		$arrayActions = array(); 
 		
  		return JSON_encode(array("status" => $arrayStatus, "elements" => $arrayElements, "actions" => $arrayActions)); 		 
@@ -120,282 +108,54 @@
                         return;
                 }
 		
-		$Gateway = $this->ReadPropertyInteger("Gateway");
 		$this->SetValue("LastUpdate", time() );
-
-		$OldTime = floatval($this->GetBuffer("UpdateRate"));
-		$UpdateRate = min(99, max(0, microtime(true) - $OldTime));
-		$this->SetValueWhenChanged("UpdateRate", $UpdateRate);
-		$this->SetBuffer("UpdateRate", microtime(true));
 
 		$RSSI = utf8_decode($PayloadData->rssi);
 		$this->SetValueWhenChanged("RSSI", $RSSI);
-
-		If ($Gateway == 1) {
-			$Battery = utf8_decode($PayloadData->volt);
-			$this->SetValueWhenChanged("BatteryVoltage", $Battery);
-
-			$BatteryPercentage = utf8_decode($PayloadData->batt);
-			$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
-
-			$Temperature = utf8_decode($PayloadData->tempc);
-			$this->SetValueWhenChanged("Temperature", $Temperature);
-
-			$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
-			$TankLevel_rel = (($Level_cm * 10) / $this->GasBottleValue() ) * 100;
-			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
-			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
-
-			$QualityStars = utf8_decode($PayloadData->quality);
-			$this->SetValueWhenChanged("QualityStars", $QualityStars);
-
-			$SyncPressed = boolval(utf8_decode($PayloadData->sync));
-			$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
-			
-			if(isset($PayloadData->accx)){                                                                                                                                                                       
-				$AcceloX = utf8_decode($PayloadData->accx);
-				$this->SetValueWhenChanged("AcceloX", $AcceloX);
-			} else {
-				$AcceloX = 0;
-				$this->SetValueWhenChanged("AcceloX", 0);
-			}
-			
-			if(isset($PayloadData->accy)){                                                                                                                                                                       
-				$AcceloY = utf8_decode($PayloadData->accy);
-				$this->SetValueWhenChanged("AcceloY", $AcceloY);
-			} else {
-				$AcceloY = 0;
-				$this->SetValueWhenChanged("AcceloY", 0);
-			} 
-			
-			if (($AcceloX <= 2) AND ($AcceloX >= -2) AND ($AcceloY <= 2) AND ($AcceloY >= -2)) {
-				$this->SetValueWhenChanged("PositionWarning", false);
-			} else {
-				$this->SetValueWhenChanged("PositionWarning", true);
-			}
-		}
-		elseIf ($Gateway == 2) {
-			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
-			$DataArray = array();
-			$DataArray = $this->hex2ByteArray($RAW_Data);
-
-			If (($DataArray[1] == 0x0d) AND (count($DataArray) == 25)) { // Standard
-				$this->DataEvaluationGasStandard(serialize($DataArray));
-				$this->SendDebug("ReceiveData", " Roh-Daten: ".$RAW_Data, 0);
-			}
-			elseIf (($DataArray[1] == 0x59) AND (count($DataArray) == 12)) { // Pro
-				$this->DataEvaluationGasPro(serialize($DataArray));
-			}
-			else {
-				$this->SendDebug("ReceiveData", "Unbekannter Sensortyp!", 0);
-			}
-		}	
-	}
-	    
-	private function DataEvaluationGasStandard(string $Data)   
-	{
-		$DataArray = array();
-		$DataArray = unserialize($Data); //$this->hex2ByteArray($Data);
-		//$this->SendDebug("DataEvaluationGasStandard", serialize($DataArray), 0);
 		
-		$Battery = ($DataArray[5] / 256.0) * 2.0 + 1.5;
+		/**
+		$Battery = utf8_decode($PayloadData->volt);
 		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
-		
-		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
-		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
-		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
-		
-		$Temperature_RAW = ($DataArray[6] & 0x3f);
-		$Temperature = (($DataArray[6] & 0x3f) - 25.0) * 1.776964;
-		If ($Temperature == 0) {
-			$this->SetValueWhenChanged("Temperature", -40);
-		} else {
-			$Temperature = max(-40, $Temperature);
-			$this->SetValueWhenChanged("Temperature", $Temperature);
-		}
-		
-		$SyncPressed = ($DataArray[6] & 0x80);
-		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
-		
-		$adv = array();
-		$w = 7;
-		$last_time = 0;
-		$ndx = 0;
 
-  		for ($q = 0; $q < 12; $q +=1 ) {
-			$bitpos = $q * 10;
-			$bytepos = floor($bitpos / 8);
-			$off = $bitpos % 8;
-			$v = $DataArray[$w + $bytepos] + $DataArray[$w + $bytepos + 1] * 256;
-			$v = $v >> $off;
-			$dt = ($v & 0x1f) + 1;
-			$v = $v >> 5;
-			$amp = $v & 0x1f;
-			$this_time = $last_time + $dt;
-			$last_time = $this_time;
-			if ($this_time > 255) {
-			  break;
-			}
-			if (!$amp) {
-			  continue;
-			}
-			$amp -= 1;
-			$amp *= 4;
-			$amp += 6;
-			$adv[$ndx] = array("a" => $amp, "i" => $this_time * 2);
-			$ndx += 1;
-		}
-       
-		//$this->SendDebug("DataEvaluationGasStandard", serialize($adv), 0);
-		
-		$last = 0;
-	    	$data = array();
-	    	$p = $adv;
-	    	if ($p) {
-			$last = -20;
-			for ($i = 0; $i < count($p); $i += 1) {
-		    		$time = round($p[$i]["i"] * 10);
-		    		$amp = round(($p[$i]["a"] / 512.0) * (159 / 128), 4);
-		    		if ($last + 20 !== $time) {
-					array_push($data, $last + 20, -0.02);
-					array_push($data, $time - 20, -0.02);
-		    		}
-		    		$last = $time;
-		    		array_push($data, $time, $amp);
-	      		}
-	      		array_push($data, $last + 20, -0.02);
-	      		array_push($data, 2000, -0.02);
-	    	}
-		else {
-			$this->SetValueWhenChanged("GasLevel", 0);
-			return;
-		}
-		
-		
-		
-		//$this->SendDebug("DataEvaluationGasStandard", serialize($data), 0);
-		
-		// Peak finden
-		for ($i = 0; $i < count($data); $i += 2) {
-    			If ($data[$i + 1] > 0) {
-        			$TankLevel = $data[$i];
-				$Peak = $data[$i + 1];
-				break;
-    			}
-		}
-		$this->SendDebug("DataEvaluationGasStandard", "TankLevel roh: ".$TankLevel, 0);
-		
-		
-		$lpg_butane_ratio = 1;
-		$c = 1040.71 - 4.87 * $Temperature_RAW - 137.5 * $lpg_butane_ratio - 0.0107 * $Temperature_RAW * $Temperature_RAW - 1.63 * $Temperature_RAW * $lpg_butane_ratio;
-		$this->SendDebug("DataEvaluationGasStandard", "c: ".$c, 0);
-		$this->SendDebug("DataEvaluationGasStandard", " t * c: ".($Peak * $c / 2), 0);
-		
-		
-		If ($TankLevel > 0) {
-			$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
-			$this->SendDebug("DataEvaluationGasStandard", "TankLevel mm: ".$TankLevel_mm, 0);
-			$TankLevel_rel = ($TankLevel_mm / $this->ReadPropertyInteger("GasBottleValue") ) * 100;
-			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
-			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
-		}
-		else {
-			$this->SetValueWhenChanged("GasLevel", 0);
-		}
-		
-	}		
-      
-	private function DataEvaluationGasPro(string $Data)   
-	{
-		$DataArray = array();
-		$DataArray = unserialize($Data); //$this->hex2ByteArray($Data);
-		//$this->SendDebug("DataEvaluationGasPro", serialize($DataArray), 0);
-		
-		/*
-		MA MA HW BAT TEMP Q  Q  MAC MAC MAC XACEL YACEL
-        	1  2  3  4   5    6  7  8   9   10  11    12
-		59 00 03 5d  2c   c1 83 db  79  c2  c4    f6
-		*/
-		
-		$Battery = (($DataArray[4] & 0x7F) / 32);
-		$this->SetValueWhenChanged("BatteryVoltage", $Battery);
-		
-		$BatteryPercentage = (($Battery - 2.2) / 0.65) * 100.0;
-		$BatteryPercentage = min(100, max(0, $BatteryPercentage));
+		$BatteryPercentage = utf8_decode($PayloadData->batt);
 		$this->SetValueWhenChanged("BatteryPercentage", $BatteryPercentage);
-		
-		$Temperature_RAW = $DataArray[5] & 0x7f;
-		$Temperature = $Temperature_RAW - 40;
-		If ($Temperature == 0) {
-			$this->SetValueWhenChanged("Temperature", -40);
-		} else {
-			$Temperature = max( -40, $Temperature);
-			$this->SetValueWhenChanged("Temperature", $Temperature);
-		}
-				
-		$SyncPressed = ($DataArray[5] & 0x80);
-		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
-		
-		
-		$QualityStars = $DataArray[7] >> 6;
-		$QualityStars = min(3, max(0, $QualityStars));
-		$this->SetValueWhenChanged("QualityStars", $QualityStars);
-		
-		$TankLevel = (($DataArray[7] << 8) + $DataArray[6]) & 0x3FFF;
-        	$this->SendDebug("DataEvaluationGasPro", "TankLevel roh: ".$TankLevel, 0);
-		
-		$TankLevel_mm = $TankLevel * (0.573045 + (-0.002822 * $Temperature_RAW) + (-0.00000535 * $Temperature_RAW * $Temperature_RAW));
-       		$this->SendDebug("DataEvaluationGasPro", "TankLevel mm: ".$TankLevel_mm, 0);
-		$TankLevel_rel = ($TankLevel_mm / $this->GasBottleValue() ) * 100;
-     		$TankLevel_rel = min(100, max(0, $TankLevel_rel));
+
+		$Temperature = utf8_decode($PayloadData->tempc);
+		$this->SetValueWhenChanged("Temperature", $Temperature);
+
+		$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
+		$TankLevel_rel = (($Level_cm * 10) / $this->GasBottleValue() ) * 100;
+		$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 		$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
-        
-		$AcceloX = $this->TwosComplement($DataArray[11]);
-		$this->SetValueWhenChanged("AcceloX", $AcceloX);
-		$AcceloY = $this->TwosComplement($DataArray[12]);
-		$this->SetValueWhenChanged("AcceloY", $AcceloY);
-		
-		$this->SendDebug("DataEvaluationGasPro", "x: ".$AcceloX." y: ".$AcceloY, 0);
-		
+
+		$QualityStars = utf8_decode($PayloadData->quality);
+		$this->SetValueWhenChanged("QualityStars", $QualityStars);
+
+		$SyncPressed = boolval(utf8_decode($PayloadData->sync));
+		$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
+
+		if(isset($PayloadData->accx)){                                                                                                                                                                       
+			$AcceloX = utf8_decode($PayloadData->accx);
+			$this->SetValueWhenChanged("AcceloX", $AcceloX);
+		} else {
+			$AcceloX = 0;
+			$this->SetValueWhenChanged("AcceloX", 0);
+		}
+
+		if(isset($PayloadData->accy)){                                                                                                                                                                       
+			$AcceloY = utf8_decode($PayloadData->accy);
+			$this->SetValueWhenChanged("AcceloY", $AcceloY);
+		} else {
+			$AcceloY = 0;
+			$this->SetValueWhenChanged("AcceloY", 0);
+		} 
+
 		if (($AcceloX <= 2) AND ($AcceloX >= -2) AND ($AcceloY <= 2) AND ($AcceloY >= -2)) {
 			$this->SetValueWhenChanged("PositionWarning", false);
-      		} else {
-        		$this->SetValueWhenChanged("PositionWarning", true);
-      		}
-		
-	}	
-	
-	private function GasBottleValue() 
-	{    
-		$GasBottleValue = $this->ReadPropertyInteger("GasBottleValue");
-		$IndividualLevel = $this->ReadPropertyInteger("IndividualLevel");
-		
-		$MaxLevel = 0;
-		
-		If ($GasBottleValue == 0) {
-			$MaxLevel = $IndividualLevel * 10; // Indivudeller Max-Level in mm
+		} else {
+			$this->SetValueWhenChanged("PositionWarning", true);
 		}
-		else {
-			$MaxLevel = $GasBottleValue; // Max-Level nach Flaschentyp in mm
-		}
-	return $MaxLevel; 	
-	}	
-	private function TwosComplement(int $Number) 
-	{
-    		if ($Number > 0xFF) { 
-			return false; 
-		}
-    		if ($Number >= 0x80) {
-        		return -(($Number ^ 0xFF)+1);
-    		} else {
-        		return $Number;
-    		}
-	}   
-	    
-	private function hex2ByteArray($hexString) 
-	{
-  		$string = hex2bin($hexString);
-  	return unpack('C*', $string);
+		**/
 	}
 	    
 	private function SetValueWhenChanged($Ident, $Value)
@@ -404,24 +164,5 @@
             		$this->SetValue($Ident, $Value);
         	}
     	}    
-	    
-	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
-	{
-	        if (!IPS_VariableProfileExists($Name))
-	        {
-	            IPS_CreateVariableProfile($Name, 2);
-	        }
-	        else
-	        {
-	            $profile = IPS_GetVariableProfile($Name);
-	            if ($profile['ProfileType'] != 2)
-	                throw new Exception("Variable profile type does not match for profile " . $Name);
-	        }
-	        IPS_SetVariableProfileIcon($Name, $Icon);
-	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
-	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);
-	        IPS_SetVariableProfileDigits($Name, $Digits);
-	}
-
 }
 ?>
