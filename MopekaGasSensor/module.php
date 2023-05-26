@@ -98,19 +98,7 @@
 			}
 		
 		}	   
-	}
-	
-
-	
-	public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
-    	{
- 		switch ($Message) {
-			case IPS_KERNELSTARTED:
-			
-				break;
-			
-		}
-    	}          
+	}      
 	    
 	public function ReceiveData($JSONString) 
 	{
@@ -167,6 +155,22 @@
 
 			$SyncPressed = boolval(utf8_decode($PayloadData->sync));
 			$this->SetValueWhenChanged("SyncPressed", boolval($SyncPressed));
+			
+			if(isset($PayloadData->accx)){                                                                                                                                                                       
+				$AcceloX = utf8_decode($PayloadData->accx);
+				$this->SetValueWhenChanged("AcceloX", $AcceloX);
+			} 
+			
+			if(isset($PayloadData->accy)){                                                                                                                                                                       
+				$AcceloY = utf8_decode($PayloadData->accy);
+				$this->SetValueWhenChanged("AcceloY", $AcceloY);
+			} 
+			
+			if (($AcceloX <= 2) AND ($AcceloX >= -2) AND ($AcceloY <= 2) AND ($AcceloY >= -2)) {
+				$this->SetValueWhenChanged("PositionWarning", false);
+			} else {
+				$this->SetValueWhenChanged("PositionWarning", true);
+			}
 		}
 		elseIf ($Gateway == 2) {
 			$RAW_Data = utf8_decode($PayloadData->manufacturerdata);
