@@ -17,9 +17,16 @@
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
+		$this->RegisterVariableString("Uptime", "Uptime", "", 20);
+		$this->RegisterVariableString("Type", "Typ", "", 30);
+		$this->RegisterVariableString("Version", "Version", "", 40);
+		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 50);
+		$this->RegisterVariableInteger("RSSI", "RSSI", "", 60);
 		
-		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
-		$this->RegisterVariableInteger("RSSI", "RSSI", "", 50);
+		$this->RegisterVariableString("SSID", "SSID", "", 80);
+		$this->RegisterVariableString("BSSID", "BSSID", "", 90);
+		$this->RegisterVariableString("IP", "IP", "", 100);
+		$this->RegisterVariableString("MAC", "MAC", "", 110);
 		
 		/**
 		Payload: {"uptime":7803,"version":"v1.5.1","discovery":false,"env":"esp32dev-ble","freemem":103880,"mqttport":"1024","mqttsecure":false,"tempc":48.88889,"freestack":1760,"rssi":-28,"SSID":"Paeper_Caravan","BSSID":"60:32:B1:BE:99:8E","ip":"192.168.1.106","mac":"A0:B7:65:58:DE:E4","lowpowermode":-1,"interval":55555,"intervalcnct":3600000,"scnct":119,"modules":["BT"]}
@@ -86,14 +93,33 @@
 		$PayloadData = json_decode($Payload);
 		
 		$this->SetValue("LastUpdate", time() );
-
-		$RSSI = utf8_decode($PayloadData->rssi);
-		$this->SetValueWhenChanged("RSSI", $RSSI);
+		
+		$Uptime = utf8_decode($PayloadData->uptime);
+		$this->SetValueWhenChanged("Uptime", $Uptime);
+		
+		$Type = utf8_decode($PayloadData->env);
+		$this->SetValueWhenChanged("Type", $Type);
+		
+		$Version = utf8_decode($PayloadData->version);
+		$this->SetValueWhenChanged("Version", $Version);
 		
 		$Temperature = utf8_decode($PayloadData->tempc);
 		$this->SetValueWhenChanged("Temperature", $Temperature);
 		
+		$RSSI = utf8_decode($PayloadData->rssi);
+		$this->SetValueWhenChanged("RSSI", $RSSI);
 		
+		$SSID = utf8_decode($PayloadData->ssid);
+		$this->SetValueWhenChanged("SSID", $SSID);
+		
+		$BSSID = utf8_decode($PayloadData->bssid);
+		$this->SetValueWhenChanged("BSSID", $BSSID);
+		
+		$IP = utf8_decode($PayloadData->ip);
+		$this->SetValueWhenChanged("IP", $IP);
+		
+		$MAC = utf8_decode($PayloadData->mac);
+		$this->SetValueWhenChanged("MAC", $MAC);
 	}
 	    
 	private function SetValueWhenChanged($Ident, $Value)
