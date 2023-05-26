@@ -109,10 +109,10 @@
 		$RSSI = utf8_decode($PayloadData->rssi);
 		$this->SetValueWhenChanged("RSSI", $RSSI);
 		
-		$SSID = utf8_decode($PayloadData->ssid);
+		$SSID = utf8_decode($PayloadData->SSID);
 		$this->SetValueWhenChanged("SSID", $SSID);
 		
-		$BSSID = utf8_decode($PayloadData->bssid);
+		$BSSID = utf8_decode($PayloadData->BSSID);
 		$this->SetValueWhenChanged("BSSID", $BSSID);
 		
 		$IP = utf8_decode($PayloadData->ip);
