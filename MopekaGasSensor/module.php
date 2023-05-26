@@ -2,9 +2,6 @@
     // Klassendefinition
     class MopekaGasSensor extends IPSModule 
     {
-	// https://community.symcon.de/t/hilfe-bei-der-umsetzung-von-java-in-php/125424
-	// https://community.victronenergy.com/questions/52274/venus-raspberry-pi-read-other-ble-device.html
-	    
 	// Überschreibt die interne IPS_Create($id) Funktion
         public function Create() 
         {
@@ -12,8 +9,7 @@
             	parent::Create();
 		$this->RegisterMessage(0, IPS_KERNELSTARTED);
 		$this->ConnectParent("{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}");
-	
-		
+			
             	$this->RegisterPropertyBoolean("Open", false);
 		$this->RegisterPropertyString('MQTTBaseTopic', 'Mopeka2MQTT');
         	$this->RegisterPropertyString('MQTTTopic', '');
