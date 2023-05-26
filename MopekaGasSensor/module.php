@@ -159,6 +159,7 @@
 				$AcceloX = utf8_decode($PayloadData->accx);
 				$this->SetValueWhenChanged("AcceloX", $AcceloX);
 			} else {
+				$AcceloX = 0;
 				$this->SetValueWhenChanged("AcceloX", 0);
 			}
 			
@@ -166,6 +167,7 @@
 				$AcceloY = utf8_decode($PayloadData->accy);
 				$this->SetValueWhenChanged("AcceloY", $AcceloY);
 			} else {
+				$AcceloY = 0;
 				$this->SetValueWhenChanged("AcceloY", 0);
 			} 
 			
