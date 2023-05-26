@@ -122,7 +122,6 @@
                 } else {
                         return;
                 }
-	
 		
 		$Gateway = $this->ReadPropertyInteger("Gateway");
 		$this->SetValue("LastUpdate", time() );
@@ -159,11 +158,15 @@
 			if(isset($PayloadData->accx)){                                                                                                                                                                       
 				$AcceloX = utf8_decode($PayloadData->accx);
 				$this->SetValueWhenChanged("AcceloX", $AcceloX);
-			} 
+			} else {
+				$this->SetValueWhenChanged("AcceloX", 0);
+			}
 			
 			if(isset($PayloadData->accy)){                                                                                                                                                                       
 				$AcceloY = utf8_decode($PayloadData->accy);
 				$this->SetValueWhenChanged("AcceloY", $AcceloY);
+			} else {
+				$this->SetValueWhenChanged("AcceloY", 0);
 			} 
 			
 			if (($AcceloX <= 2) AND ($AcceloX >= -2) AND ($AcceloY <= 2) AND ($AcceloY >= -2)) {
