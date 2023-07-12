@@ -18,8 +18,8 @@
 		$this->RegisterPropertyInteger("IndividualLevel", 36);
 		
 		// Profile anlegen
-		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 2);
-		$this->RegisterProfileFloat("Mopeka.cm", "Distance", "", " cm", 0, 100, 1, 2);
+		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 1);
+		$this->RegisterProfileFloat("Mopeka.cm", "Distance", "", " cm", 0, 100, 0.1, 1);
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
