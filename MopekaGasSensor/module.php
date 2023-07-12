@@ -142,7 +142,9 @@
 			$Temperature = utf8_decode($PayloadData->tempc);
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 
-			$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
+			//$Level_cm = str_replace(",", ".", utf8_decode($PayloadData->lvl_cm));
+
+			$Level_cm = utf8_decode($PayloadData->lvl_cm);
 			$this->SetValueWhenChanged("GasLevel_cm", $Level_cm);
 			$TankLevel_rel = (($Level_cm * 10) / $this->GasBottleValue() ) * 100;
 			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
