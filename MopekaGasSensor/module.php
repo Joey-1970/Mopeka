@@ -19,6 +19,7 @@
 		
 		// Profile anlegen
 		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 2);
+		$this->RegisterProfileFloat("Mopeka.cm", "Distance", "", " cm", 0, 100, 1, 2);
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
@@ -26,6 +27,7 @@
 		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
 		$this->RegisterVariableInteger("RSSI", "RSSI", "", 50);
+		$this->RegisterVariableFloat("GasLevel_cm", "Gas Füllstand", "Mopeka.cm", 59);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 60);
 		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
 		$this->RegisterVariableFloat("UpdateRate", "Update Rate", "Mopeka.sek", 80);
@@ -141,6 +143,7 @@
 			$this->SetValueWhenChanged("Temperature", $Temperature);
 
 			$Level_cm = floatval(utf8_decode($PayloadData->lvl_cm));
+			$this->SetValueWhenChanged("GasLevel_cm", $Level_cm);
 			$TankLevel_rel = (($Level_cm * 10) / $this->GasBottleValue() ) * 100;
 			$TankLevel_rel = min(100, max(0, $TankLevel_rel));
 			$this->SetValueWhenChanged("GasLevel", $TankLevel_rel);
