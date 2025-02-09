@@ -151,6 +151,35 @@
 		$RSSI = utf8_decode($PayloadData->rssi);
 		$this->SetValueWhenChanged("RSSI", $RSSI);
 
+		If ($RSSI >= -50) {
+			$RSSIText = 0;
+		}
+		elseif (($RSSI <= -51) AND ($RSSI >= -70)) {
+			$RSSIText = 1;
+		}
+		elseif (($RSSI <= -71) AND ($RSSI >= -80)) {
+			$RSSIText = 2;
+		}
+		elseif (($RSSI <= -81) AND ($RSSI >= -90)) {
+			$RSSIText = 3;
+		}
+		elseif (($RSSI <= -91) AND ($RSSI >= -105)) {
+			$RSSIText = 4;
+		}
+		else {
+			$RSSIText = 5;
+		}
+		$this->SetValueWhenChanged("RSSIText", $RSSIText);
+		/*
+		Güte des RSSI	RSSI von	RSSI bis
+		Sehr guter Empfang	-1 dBm	-50 dBm 0
+		Guter Empfang		-51 dBm	-70 dBm 1
+		Mittelmäßiger Empfang	-71 dBm	-80 dBm 2
+		Ausreichender Empfang	-81 dBm	-90 dBm 3
+		Schlechter Empfang	-91 dBm	-105 dBm 4
+		Sehr schlechter Empfang	-106 dBm	höher 5
+		*/
+
 		If ($Gateway == 1) {
 			$Battery = utf8_decode($PayloadData->volt);
 			$this->SetValueWhenChanged("BatteryVoltage", $Battery);
