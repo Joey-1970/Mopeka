@@ -20,14 +20,14 @@
 		// Profile anlegen
 		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 1);
 		$this->RegisterProfileFloat("Mopeka.cm", "Distance", "", " cm", 0, 100, 0.1, 1);
-		$this->RegisterProfileInteger("Mopeka.RSSI", "Intensity", "", " dBm", 0, 100, 1, 1);
-		$this->RegisterProfileInteger("Mopeka.RSSIText", "Intensity", "", "", 0, 3, 1);
-		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 0, "Sehr guter Empfang", "Intensity", 0x00FF00);
-		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 1, "Guter Empfang", "Intensity", 0x00FF00);
-		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 2, "Mittelmäßiger Empfang", "Intensity", 0xFFFF00);
-		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 3, "Ausreichender Empfang", "Intensity", 0xFFFF00);
-		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 4, "Schlechter Empfang", "Intensity", 0xFF0000);
-		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 5, "Sehr schlechter Empfang", "Intensity", 0xFF0000);
+		$this->RegisterProfileInteger("Mopeka.RSSI", "Intensity", "", " dBm", -106, 0, 1, 1);
+		$this->RegisterProfileInteger("Mopeka.RSSIText", "Information", "", "", 0, 3, 1);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 0, "Sehr guter Empfang", "Ok", 0x00FF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 1, "Guter Empfang", "Ok", 0x00FF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 2, "Mittelmäßiger Empfang", "Ok", 0xFFFF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 3, "Ausreichender Empfang", "Alert", 0xFFFF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 4, "Schlechter Empfang", "Alert", 0xFF0000);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 5, "Sehr schlechter Empfang", "Alert", 0xFF0000);
 		
 		/*
 		Güte des RSSI	RSSI von	RSSI bis
