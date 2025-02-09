@@ -20,13 +20,32 @@
 		// Profile anlegen
 		$this->RegisterProfileFloat("Mopeka.sek", "Clock", "", " sek", 0, 20, 1, 1);
 		$this->RegisterProfileFloat("Mopeka.cm", "Distance", "", " cm", 0, 100, 0.1, 1);
+		$this->RegisterProfileInteger("Mopeka.RSSI", "Intensity", "", " dBm", 0, 100, 1, 1);
+		$this->RegisterProfileInteger("Mopeka.RSSIText", "Intensity", "", "", 0, 3, 1);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 0, "Sehr guter Empfang", "Intensity", 0x00FF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 1, "Guter Empfang", "Intensity", 0x00FF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 2, "Mittelmäßiger Empfang", "Intensity", 0xFFFF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 3, "Ausreichender Empfang", "Intensity", 0xFFFF00);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 4, "Schlechter Empfang", "Intensity", 0xFF0000);
+		IPS_SetVariableProfileAssociation("Mopeka.RSSIText", 5, "Sehr schlechter Empfang", "Intensity", 0xFF0000);
+		
+		/*
+		Güte des RSSI	RSSI von	RSSI bis
+		Sehr guter Empfang	-1 dBm	-50 dBm 0
+		Guter Empfang		-51 dBm	-70 dBm 1
+		Mittelmäßiger Empfang	-71 dBm	-80 dBm 2
+		Ausreichender Empfang	-81 dBm	-90 dBm 3
+		Schlechter Empfang	-91 dBm	-105 dBm 4
+		Sehr schlechter Empfang	-106 dBm	höher 5
+		*/
 		
 		// Status-Variablen anlegen
 		$this->RegisterVariableInteger("LastUpdate", "Letztes Update", "~UnixTimestamp", 10);
 		$this->RegisterVariableFloat("BatteryVoltage", "Batterie Spannung", "~Volt", 20);
 		$this->RegisterVariableInteger("BatteryPercentage", "Batterie Prozentual", "~Intensity.100", 30);
 		$this->RegisterVariableFloat("Temperature", "Temperatur", "~Temperature", 40);
-		$this->RegisterVariableInteger("RSSI", "RSSI", "", 50);
+		$this->RegisterVariableInteger("RSSI", "RSSI", "Mopeka.RSSI", 50);
+		$this->RegisterVariableInteger("RSSIText", "RSSI", "Mopeka.RSSIText", 53);
 		$this->RegisterVariableFloat("GasLevel_cm", "Gas Füllstand", "Mopeka.cm", 59);
 		$this->RegisterVariableInteger("GasLevel", "Gas Füllstand", "~Intensity.100", 60);
 		$this->RegisterVariableInteger("QualityStars", "Qualitäts Sterne", "", 70);
@@ -408,6 +427,23 @@
             		$this->SetValue($Ident, $Value);
         	}
     	}    
+
+	private function RegisterProfileInteger($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize)
+	{
+	        if (!IPS_VariableProfileExists($Name))
+	        {
+	            IPS_CreateVariableProfile($Name, 1);
+	        }
+	        else
+	        {
+	            $profile = IPS_GetVariableProfile($Name);
+	            if ($profile['ProfileType'] != 1)
+	                throw new Exception("Variable profile type does not match for profile " . $Name);
+	        }
+	        IPS_SetVariableProfileIcon($Name, $Icon);
+	        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
+	        IPS_SetVariableProfileValues($Name, $MinValue, $MaxValue, $StepSize);    
+	}    
 	    
 	private function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
 	{
